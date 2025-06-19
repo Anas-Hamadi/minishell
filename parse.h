@@ -1,3 +1,22 @@
+#ifndef PARSE_H
+#define PARSE_H
+#define MAX_WORD_SIZE 1024
+
+
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <ctype.h>
+
+void	skip_spaces(char **cmd);
+int		detect_invalid_metachar(char c);
+char	*handle_word(char **cmd);
+char	*expand_variable(char **cmd);
+char	*handle_quote_block(char **cmd, char *quote_context);
+int		get_last_exit_status(void);
+
 typedef struct s_heredoc {
     char *delimiter;
     char *content;
@@ -17,4 +36,6 @@ typedef struct s_cmdnode {
     t_redir *redirections;
     char    **argv;
     struct s_cmdnode *next;
-} t_cmdnode;  
+} t_cmdnode;
+
+#endif
