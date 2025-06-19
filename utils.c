@@ -90,7 +90,7 @@ char	*handle_word(char **cmd)
 			(*cmd)++;
 		}
 	}
-	buffer[i] = '\0';
+	buffer[i] = '\0'; 
 	return (strdup(buffer));
 }
 
