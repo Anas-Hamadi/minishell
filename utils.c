@@ -6,6 +6,13 @@ void	skip_spaces(char **cmd)
 		(*cmd)++;
 }
 
+int	is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' ||
+			c == '\v' || c == '\f' || c == '\r');
+}
+
+
 int	detect_invalid_metachar(char c)
 {
 	return (c == ';' || c == '&' ||
@@ -15,8 +22,7 @@ int	detect_invalid_metachar(char c)
 char	*handle_quote_block(char **cmd, char *quote_context)
 {
 	char	quote;
-	char	*start;
-	char	*buffer;
+	char	buffer[MAX_WORD_SIZE];
 	int		i = 0;
 
 	quote = **cmd;
@@ -24,24 +30,42 @@ char	*handle_quote_block(char **cmd, char *quote_context)
 		return (NULL);
 	*quote_context = quote;
 	(*cmd)++; // skip opening quote
-	start = *cmd;
 
-	// Find end quote
-	while (**cmd && **cmd != quote)
-		(*cmd)++;
-	if (**cmd != quote)
-		return (NULL); // unclosed quote
-
-	// Allocate + copy content between quotes
-	buffer = malloc(*cmd - start + 1);
-	if (!buffer)
-		return (NULL);
-	while (start < *cmd)
-		buffer[i++] = *start++;
-	buffer[i] = '\0';
-
-	(*cmd)++; // skip closing quote
-	return (buffer);
+	if (quote == '\'')
+	{
+		// Single quotes: copy literally until next single quote
+		while (**cmd && **cmd != '\'')
+			buffer[i++] = *(*cmd)++;
+		if (**cmd != '\'')
+			return (NULL); // unclosed quote
+		(*cmd)++; // skip closing quote
+		buffer[i] = '\0';
+		return (strdup(buffer));
+	}
+	else // double quotes: expand variables
+	{
+		while (**cmd && **cmd != '"')
+		{
+			if (**cmd == '$')
+			{
+				char *expanded = expand_variable(cmd);
+				if (!expanded)
+					return (NULL);
+				for (int j = 0; expanded[j]; j++)
+					buffer[i++] = expanded[j];
+				free(expanded);
+			}
+			else
+			{
+				buffer[i++] = *(*cmd)++;
+			}
+		}
+		if (**cmd != '"')
+			return (NULL); // unclosed quote
+		(*cmd)++; // skip closing quote
+		buffer[i] = '\0';
+		return (strdup(buffer));
+	}
 }
 
 int	is_metachar(char c)
@@ -53,7 +77,6 @@ char	*handle_word(char **cmd)
 {
 	char	buffer[MAX_WORD_SIZE];
 	int		i = 0;
-	char	*tmp;
 	char	quote;
 	char	*quoted;
 	char	*expanded;
@@ -65,12 +88,6 @@ char	*handle_word(char **cmd)
 			quoted = handle_quote_block(cmd, &quote);
 			if (!quoted)
 				return (NULL); // unclosed quote
-			if (quote == '"') // expand $ inside double quotes
-			{
-				tmp = quoted;
-				quoted = expand_variable(&tmp); // you'll implement this later
-				free(tmp);
-			}
 			for (int j = 0; quoted[j]; j++)
 				buffer[i++] = quoted[j];
 			free(quoted);
@@ -103,7 +120,9 @@ char	*expand_variable(char **cmd)
 	char	varname[256];
 	int		i = 0;
 	char	*value;
+	// char	*mark;
 
+	// mark = *cmd;
 	if (**cmd != '$')
 		return (NULL);
 	(*cmd)++; // skip the $
@@ -115,6 +134,7 @@ char	*expand_variable(char **cmd)
 		if (!value)
 			return (NULL);
 		snprintf(value, 12, "%d", get_last_exit_status());
+		// free(mark);
 		return (value);
 	}
 
@@ -123,7 +143,7 @@ char	*expand_variable(char **cmd)
 		return (strdup("")); // invalid var
 
 	// collect variable name
-	while (**cmd && (isalnum(**cmd) || **cmd == '_'))
+	while (**cmd && (isalnum(**cmd) || **cmd == '_') && !is_metachar(**cmd))
 		varname[i++] = *(*cmd)++;
 	varname[i] = '\0';
 

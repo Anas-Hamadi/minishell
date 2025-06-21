@@ -31,11 +31,22 @@ typedef struct s_redir {
     struct s_redir *next;
 } t_redir;
 
-typedef struct s_cmdnode {
+typedef struct s_cmdnode2 {
     t_heredoc *heredocs;
     t_redir *redirections;
     char    **argv;
     struct s_cmdnode *next;
+} t_cmdnode2;
+
+
+// new main struct
+typedef struct s_cmdnode
+{
+    // t_redir *redirections;
+    char    **argv;
+    char	**reds;
+	struct	s_cmdnode *next;
 } t_cmdnode;
+
 
 #endif

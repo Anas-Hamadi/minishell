@@ -14,3 +14,4 @@ libft/obj/
 .vscode/
 *.swp
 .DS_Store
+*.pdf
