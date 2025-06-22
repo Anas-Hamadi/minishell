@@ -6,6 +6,11 @@ void	skip_spaces(char **cmd)
 		(*cmd)++;
 }
 
+int is_metachar(char c)
+{
+    return (c== ' ' || c == '\t' || c == '|' || c == '<' || c == '>' || c == '\0');
+}
+
 int	is_space(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' ||
@@ -66,11 +71,6 @@ char	*handle_quote_block(char **cmd, char *quote_context)
 		buffer[i] = '\0';
 		return (strdup(buffer));
 	}
-}
-
-int	is_metachar(char c)
-{
-	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>' || c == '\0');
 }
 
 char	*handle_word(char **cmd)
