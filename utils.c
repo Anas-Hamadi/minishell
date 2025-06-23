@@ -51,7 +51,7 @@ char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
 	{
 		while (**cmd && **cmd != '"')
 		{
-			if (**cmd == '$')
+			if (**cmd == '$' && !in_del)
 			{
 				char *expanded = expand_variable(cmd);
 				if (!expanded)
@@ -101,7 +101,7 @@ char	*handle_hd_line(char **cmd)
 }
 
 
-char	*handle_word(char **cmd, bool in_del)
+char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 {
 	char	buffer[MAX_WORD_SIZE];
 	int		i = 0;
@@ -118,9 +118,10 @@ char	*handle_word(char **cmd, bool in_del)
 				return (NULL); // unclosed quote
 			for (int j = 0; quoted[j]; j++)
 				buffer[i++] = quoted[j];
+			*expand_in_hd = 0;
 			free(quoted);
 		}
-		else if (**cmd == '$')
+		else if (**cmd == '$' && !in_del)
 		{
 			expanded = expand_variable(cmd);
 			if (!expanded)
@@ -131,6 +132,9 @@ char	*handle_word(char **cmd, bool in_del)
 		}
 		else
 		{
+			// to rethink (close to hardcode)
+			// if (in_del && (**cmd == '"' || **cmd == '\''))
+			// 	*expand_in_hd = 0;
 			buffer[i++] = **cmd;
 			(*cmd)++;
 		}

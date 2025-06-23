@@ -14,6 +14,7 @@ int main(void)
     char    *input;
     char    *cmd;
     char    *word;
+	bool	expand_in_hd = 1;
 
     // Enable command history
     using_history();
@@ -77,7 +78,10 @@ int main(void)
 					expand = !(quote == '"' || quote == '\'');
 				}
 				else
-					delim = handle_word(&cmd, 1);
+				{
+					delim = handle_word(&cmd, 1, &expand_in_hd);
+					expand = expand_in_hd;
+				}
 					// ☝️in handle_word, needs a param to let it know to not expand var
 
 				if (!delim)
@@ -85,7 +89,6 @@ int main(void)
 					fprintf(stderr, "syntax error: bad heredoc delimiter\n");
 					break;
 				}
-
 				if (handle_heredoc(delim, expand, &tmpfile) < 0)
 				{
 					perror("heredoc");
@@ -128,7 +131,7 @@ int main(void)
 				if (*cmd=='\''||*cmd=='"')
 					fname = handle_quote_block(&cmd, &quote, 0);
 				else
-					fname = handle_word(&cmd, 0);
+					fname = handle_word(&cmd, 0, &expand_in_hd);
 
 				if (!fname)
 				{
@@ -164,7 +167,7 @@ int main(void)
             }
 
             // Parse a word
-            word = handle_word(&cmd, 0);
+            word = handle_word(&cmd, 0, &expand_in_hd);
             if (!word)
             {
                 fprintf(stderr, "Parse error at pos %ld\n", cmd - input);

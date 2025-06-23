@@ -21,7 +21,7 @@
 char	*handle_hd_line(char **cmd);
 void	skip_spaces(char **cmd);
 int		detect_invalid_metachar(char c);
-char	*handle_word(char **cmd, bool in_del);
+char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd);
 char	*expand_variable(char **cmd);
 char	*handle_quote_block(char **cmd, char *quote_context, bool in_del);
 int		get_last_exit_status(void);
