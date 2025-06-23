@@ -16,15 +16,17 @@
 # include <readline/history.h>
 # include <string.h>
 # include <sys/stat.h>
+# include <sys/types.h>
 
+char	*handle_hd_line(char **cmd);
 void	skip_spaces(char **cmd);
 int		detect_invalid_metachar(char c);
-char	*handle_word(char **cmd);
+char	*handle_word(char **cmd, bool in_del);
 char	*expand_variable(char **cmd);
-char	*handle_quote_block(char **cmd, char *quote_context);
+char	*handle_quote_block(char **cmd, char *quote_context, bool in_del);
 int		get_last_exit_status(void);
 int		is_metachar(char c);
-// static	void trim_trailing(char *s);
+int		handle_heredoc(const char *delimiter, int expand, char **out_filename);
 
 // OLD STRUCTS 
 // typedef struct s_heredoc {
@@ -49,15 +51,35 @@ int		is_metachar(char c);
 // } t_cmdnode2;
 
 
-// new main struct
-typedef struct s_cmdnode
-{
-    // t_redir *redirections;
-    // char	**reds;
-	// as char** or actual t_redir linked list? ☝️
-    char    **argv;
-	struct	s_cmdnode *next;
-	// what i else i need?
+// // new main struct
+// typedef struct s_cmdnode
+// {
+//     // t_redir *redirections;
+//     // char	**reds;
+// 	// as char** or actual t_redir linked list? ☝️
+//     char    **argv;
+// 	struct	s_cmdnode *next;
+// 	// what i else i need?
+// } t_cmdnode;
+
+
+typedef enum e_redir_type {
+    R_IN,       // "< file"
+    R_OUT,      // "> file"
+    R_APPEND    // ">> file"
+} t_redir_type;
+
+typedef struct s_redir {
+    t_redir_type       type;
+    char              *filename;    // or temp-file from heredoc
+    struct s_redir    *next;
+} t_redir;
+
+/* one command (between pipes) */
+typedef struct s_cmdnode {
+    char       **argv;        // NULL-terminated list of args
+    t_redir     *redirs;      // list of <, >, >> (and heredoc temp files)
+    struct s_cmdnode *next;   // next in pipe
 } t_cmdnode;
 
 

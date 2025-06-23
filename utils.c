@@ -24,7 +24,7 @@ int	detect_invalid_metachar(char c)
 			c == '(' || c == ')' || c == '*');
 }
 
-char	*handle_quote_block(char **cmd, char *quote_context)
+char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
 {
 	char	quote;
 	char	buffer[MAX_WORD_SIZE];
@@ -73,7 +73,35 @@ char	*handle_quote_block(char **cmd, char *quote_context)
 	}
 }
 
-char	*handle_word(char **cmd)
+char	*handle_hd_line(char **cmd)
+{
+	char	buffer[(MAX_WORD_SIZE * 10)];
+	int		i = 0;
+	char	*expanded;
+
+	while (**cmd)
+	{
+		if (**cmd == '$')
+		{
+			expanded = expand_variable(cmd);
+			if (!expanded)
+				return (NULL);
+			for (int j = 0; expanded[j]; j++)
+				buffer[i++] = expanded[j];
+			free(expanded);
+		}
+		else
+		{
+			buffer[i++] = **cmd;
+			(*cmd)++;
+		}
+	}
+	buffer[i] = '\0'; 
+	return (strdup(buffer));
+}
+
+
+char	*handle_word(char **cmd, bool in_del)
 {
 	char	buffer[MAX_WORD_SIZE];
 	int		i = 0;
@@ -85,7 +113,7 @@ char	*handle_word(char **cmd)
 	{
 		if (**cmd == '\'' || **cmd == '"')
 		{
-			quoted = handle_quote_block(cmd, &quote);
+			quoted = handle_quote_block(cmd, &quote, 0);
 			if (!quoted)
 				return (NULL); // unclosed quote
 			for (int j = 0; quoted[j]; j++)
