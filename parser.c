@@ -142,17 +142,17 @@ void free_cmd_list(t_cmdnode *cmd_list)
     }
 }
 
-static void add_arg(t_cmdnode *node, char *word)  
-{  
-    add_arg_to_cmd(node, word);
-}  
+// static void add_arg(t_cmdnode *node, char *word)  
+// {  
+//     add_arg_to_cmd(node, word);
+// }  
 
-static void add_redir(t_cmdnode *node, t_redir_type type, char *filename)  
-{  
-    t_redir *r = create_redir(type, filename);
-    if (r)
-        add_redir_to_cmd(node, r);
-}  
+// static void add_redir(t_cmdnode *node, t_redir_type type, char *filename)  
+// {  
+//     t_redir *r = create_redir(type, filename);
+//     if (r)
+//         add_redir_to_cmd(node, r);
+// }  
 
 /* Parses one full line into a pipeline of cmdnodes */  
 t_cmdnode *parse_command_line(char *input)  
@@ -211,7 +211,9 @@ t_cmdnode *parse_command_line(char *input)
                 free_cmd_list(head);
                 return NULL;
             }
-            add_redir(cur, R_IN, tmp);  
+            t_redir *r = create_redir(R_IN, tmp);
+			if (r)
+				add_redir_to_cmd(cur, r);  
             free(delim);
             free(tmp);
         }  
@@ -236,7 +238,9 @@ t_cmdnode *parse_command_line(char *input)
                 free_cmd_list(head);
                 return NULL;
             }
-            add_redir(cur, t, fn);
+            t_redir *r = create_redir(t, fn);
+            if (r)
+                add_redir_to_cmd(cur, r);
             free(fn);
         }  
         else if (*cmd=='|')  
@@ -265,7 +269,7 @@ t_cmdnode *parse_command_line(char *input)
             while (end >= w && (*end == ' ' || *end == '\t'))
                 *end-- = '\0';
                 
-            add_arg(cur, w);
+            add_arg_to_cmd(cur, w);
             free(w);
         }  
     }  
