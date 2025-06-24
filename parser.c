@@ -142,7 +142,6 @@ void free_cmd_list(t_cmdnode *cmd_list)
     }
 }
 
-/* Legacy helper functions - now use the new API */
 static void add_arg(t_cmdnode *node, char *word)  
 {  
     add_arg_to_cmd(node, word);
@@ -166,7 +165,7 @@ t_cmdnode *parse_command_line(char *input)
     if (!head)
         return NULL;
 
-    while (*cmd)  
+    while (*cmd)
     {  
         skip_spaces(&cmd);  
         if (!*cmd) break;  
@@ -193,18 +192,20 @@ t_cmdnode *parse_command_line(char *input)
             }
             
             expand_hd = true;  
-            char quote = 0;  
-            char *delim = (*cmd=='\''||*cmd=='\"')  
-                ? handle_quote_block(&cmd, &quote,  true)  
-                : handle_word(&cmd, true, &expand_hd); 
-			if (!delim) {
+            bool has_quotes = false;
+            char *delim = handle_word(&cmd, true, &expand_hd);
+            if (!delim) {
 				fprintf(stderr, "syntax error: bad heredoc delimiter\n");
 				free_cmd_list(head);
 				return NULL;
 			}
+            
+            // Check if delimiter had quotes (disable expansion if so)
+            if (!expand_hd)
+                has_quotes = true;
 
             char *tmp;  
-            if (handle_heredoc(delim, expand_hd, &tmp) < 0) {
+            if (handle_heredoc(delim, expand_hd && !has_quotes, &tmp) < 0) {
                 perror("heredoc");
                 free(delim);
                 free_cmd_list(head);
@@ -229,11 +230,7 @@ t_cmdnode *parse_command_line(char *input)
                 return NULL;
             }
             
-            char quote = 0;  
-            bool xi = false;  
-            char *fn = (*cmd=='\''||*cmd=='\"')  
-                ? handle_quote_block(&cmd, &quote, false)  
-                : handle_word(&cmd, false, &xi);  
+            char *fn = handle_word(&cmd, 0, 0);  
             if (!fn) {
                 fprintf(stderr, "syntax error: bad filename\n");
                 free_cmd_list(head);
@@ -256,8 +253,7 @@ t_cmdnode *parse_command_line(char *input)
         else  
         {  
             /* a normal word */  
-            bool xi = false;  
-            char *w = handle_word(&cmd, false, &xi);  
+            char *w = handle_word(&cmd, 0, 0);  
             if (!w) {
                 fprintf(stderr, "Parse error at pos %ld\n", cmd - input);
                 free_cmd_list(head);
@@ -274,7 +270,7 @@ t_cmdnode *parse_command_line(char *input)
         }  
     }  
 
-    return head;  
+    return (head);  
 }
 
 /* Debug function to print the parsed command structure */

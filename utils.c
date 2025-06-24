@@ -107,17 +107,18 @@ char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 	char	quote;
 	char	*quoted;
 	char	*expanded;
+	bool	found_quotes = false;
 
 	while (**cmd && !is_metachar(**cmd))
 	{
 		if (**cmd == '\'' || **cmd == '"')
 		{
-			quoted = handle_quote_block(cmd, &quote, 0);
+			quoted = handle_quote_block(cmd, &quote, in_del);
 			if (!quoted)
 				return (NULL); // unclosed quote
 			for (int j = 0; quoted[j]; j++)
 				buffer[i++] = quoted[j];
-			*expand_in_hd = 0;
+			found_quotes = true;
 			free(quoted);
 		}
 		else if (**cmd == '$' && !in_del)
@@ -131,14 +132,16 @@ char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 		}
 		else
 		{
-			// to rethink (close to hardcode)
-			// if (in_del && (**cmd == '"' || **cmd == '\''))
-			// 	*expand_in_hd = 0;
 			buffer[i++] = **cmd;
 			(*cmd)++;
 		}
 	}
-	buffer[i] = '\0'; 
+	buffer[i] = '\0';
+	
+	// If we found quotes, signal that expansion should be disabled
+	if (expand_in_hd && found_quotes)
+		*expand_in_hd = false;
+	
 	return (strdup(buffer));
 }
 
