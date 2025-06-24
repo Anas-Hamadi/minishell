@@ -15,9 +15,10 @@ static char *generate_tempfile(void)
 }
 
 // Read heredoc lines into a temp file until delimiter is matched
-// expand: if true, perform variable expansion (not implemented here)
+// expand: if true, perform variable expansion
 char *read_heredoc(const char *delimiter, int expand)
 {
+    (void)expand; // Suppress unused parameter warning for now
     char *filename = generate_tempfile();
     if (!filename)
     {

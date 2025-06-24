@@ -18,51 +18,7 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 
-char	*handle_hd_line(char **cmd);
-void	skip_spaces(char **cmd);
-int		detect_invalid_metachar(char c);
-char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd);
-char	*expand_variable(char **cmd);
-char	*handle_quote_block(char **cmd, char *quote_context, bool in_del);
-int		get_last_exit_status(void);
-int		is_metachar(char c);
-int		handle_heredoc(const char *delimiter, int expand, char **out_filename);
-
-// OLD STRUCTS 
-// typedef struct s_heredoc {
-//     char *delimiter;
-//     char *content;
-//     struct s_heredoc *next;
-// } t_heredoc;    
-
-// typedef struct s_redir {
-//     int type; // 0 for input, 1 for output, 2 for append, 3 for heredoc
-//     char *filename; // only used if type is not HEREDOC
-//     char quote_context; // 0, ', or "
-//     t_heredoc *heredoc; // Only used if type is HEREDOC
-//     struct s_redir *next;
-// } t_redir;
-
-// typedef struct s_cmdnode2 {
-//     t_heredoc *heredocs;
-//     t_redir *redirections;
-//     char    **argv;
-//     struct s_cmdnode *next;
-// } t_cmdnode2;
-
-
-// // new main struct
-// typedef struct s_cmdnode
-// {
-//     // t_redir *redirections;
-//     // char	**reds;
-// 	// as char** or actual t_redir linked list? ☝️
-//     char    **argv;
-// 	struct	s_cmdnode *next;
-// 	// what i else i need?
-// } t_cmdnode;
-
-
+/* Type definitions */
 typedef enum e_redir_type {
     R_IN,       // "< file"
     R_OUT,      // "> file"
@@ -82,5 +38,26 @@ typedef struct s_cmdnode {
     struct s_cmdnode *next;   // next in pipe
 } t_cmdnode;
 
+/* Function declarations */
+char	*handle_hd_line(char **cmd);
+void	skip_spaces(char **cmd);
+int		detect_invalid_metachar(char c);
+char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd);
+char	*expand_variable(char **cmd);
+char	*handle_quote_block(char **cmd, char *quote_context, bool in_del);
+int		get_last_exit_status(void);
+int		is_metachar(char c);
+int		handle_heredoc(const char *delimiter, int expand, char **out_filename);
+
+/* Structure management functions */
+t_cmdnode	*create_cmdnode(void);
+t_redir		*create_redir(t_redir_type type, char *filename);
+void		add_redir_to_cmd(t_cmdnode *cmd, t_redir *redir);
+void		add_arg_to_cmd(t_cmdnode *cmd, char *arg);
+void		free_cmdnode(t_cmdnode *cmd);
+void		free_redir_list(t_redir *redirs);
+void		free_cmd_list(t_cmdnode *cmd_list);
+t_cmdnode	*parse_command_line(char *input);
+void		print_cmd_structure(t_cmdnode *cmd_list);
 
 #endif

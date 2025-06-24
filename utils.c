@@ -17,7 +17,6 @@ int	is_space(char c)
 			c == '\v' || c == '\f' || c == '\r');
 }
 
-
 int	detect_invalid_metachar(char c)
 {
 	return (c == ';' || c == '&' ||
