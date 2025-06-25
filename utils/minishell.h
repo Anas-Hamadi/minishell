@@ -1,0 +1,63 @@
+#ifndef MINISHELL_H
+# define MINISHELL_H
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <sys/wait.h>
+
+typedef struct s_list
+{
+	void			*content;
+	struct s_list	*next;
+}	t_list;
+
+typedef struct s_shell
+{
+	char	*input;
+	char	**s_input;
+	t_list	*t_envp;
+}	t_shell;
+
+
+extern char	**g_env;
+
+void	ft_export(t_list **t_envp, char **input);
+void	ft_cd(t_shell *shell);
+int		check_builtin(t_shell *shell);
+int		ft_strcmp(const char *s1, const char *s2);
+char	**ft_split(char const *s, char c);
+void	ft_free(char **arr);
+void	ft_echo(char **s_input);
+int		ft_strlen(char *str);
+void	ft_pwd(char **s_input);
+char	*ft_strchr(const char *s, int c);
+void	ft_env(t_list *t_envp);
+char	*ft_strchr(const char *s, int c);
+int		ft_atoi(const char *str);
+void	ft_exit(char **s_input);
+void	*ft_memcpy(void	*dest, const void *src, size_t n);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strrchr(const char *s, int c);
+char	*ft_strdup(const char *s);
+void	ft_unset(char **s_input, t_list *t_envp);
+void	ft_lstfree(t_list *lst);
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	**sorted_env(t_list *env);
+
+t_list	*ft_lstnew(void *content);
+void	ft_lstadd_back(t_list **lst, t_list *t_new);
+t_list	*ft_lstlast(t_list *lst);
+t_list	*envp_to_list(char **envp);
+int	ft_lstsize(t_list *lst);
+
+
+char	*get_path_value(t_list *t_envp);
+char	*find_cmd_path(char *cmd, t_list *t_envp);
+void	check_exec(t_shell *shell);
+
+# endif
