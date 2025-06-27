@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "parsing/parse.h"
 
-// might use it later 
+// will be used later 
 // void	handle_single_redir(char *filename, int flags, int std_fd)
 // {
 // 	int fd = open(filename, flags, 0644);
@@ -68,8 +68,7 @@ int main(int ac, char **av, char **envp)
 	char *input;
 
 	t_cmdnode *cmd_list;
-	t_cmdnode *current;
-	while (cmd_list)
+	while (true)
 	{
 		input = readline("minishell$");
 		if (!input)
@@ -82,11 +81,10 @@ int main(int ac, char **av, char **envp)
 			continue ;
 		}
 		cmd_list = parse_command_line(input);
-		current = cmd_list;
-		while (current)
+		while (cmd_list) // loop through commands 
 		{
-			if (current->next)
-				
+			if (cmd_list) // check for pipes 
+				handle_pipes();
 		}
 	}
 }

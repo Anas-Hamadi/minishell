@@ -1,4 +1,5 @@
 #include "../minishell.h"
+#include <unistd.h>
 
 // // ls | grep .c | wc -l
 // // svae the original in and output (redirections)
@@ -67,12 +68,37 @@
 void	handle_pipes(t_cmdnode *cmd_list)
 {
 	int pid;
+	int pipefd[2];
+	int prev_fd = -1;
+	char	*cmd_path;
+
 	while (cmd_list->next)
 	{
-		pid = fork;
+		pid = fork();
+		pipe(pipefd);
 		if (pid == 0)
 		{
-			
+			if (prev_fd != -1)// if we are on the second token we need to take input from prev_fd
+			{
+				dup2(prev_fd, 0);
+				close(prev_fd);
+			}
+			else // if not then the output will be in the write side of the pipe (pipefd[1])
+			{
+				dup2(pipefd[1], 1);
+				close(pipefd[1]);
+			}
+			handle_redirs(cmd_list);
+			cmd_path = find_cmd_path(cmd_list->argv[0], cmd_list->t_envp);
+			// now call execute_cmd 
+			// check for errors
+		}
+		else // this is the parent 
+		{
+			if (prev_fd != -1)
+				close(prev_fd);
+			close(pipefd[1]);
+			prev_fd = pipefd[0];
 		}
 	}
 }
