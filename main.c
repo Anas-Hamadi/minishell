@@ -1,36 +1,177 @@
 #include "minishell.h"
+#include <fcntl.h>
 #include <readline/history.h>
+#include <stdio.h>
 #include <unistd.h>
+#include "parsing/parse.h"
 
-int	main(int ac, char **av, char **envp)
+// might use it later 
+// void	handle_single_redir(char *filename, int flags, int std_fd)
+// {
+// 	int fd = open(filename, flags, 0644);
+// 	if (fd < 0)
+// 		perror("open");
+// 	else
+// 	{
+// 		dup2(fd, std_fd);
+// 		close(fd);
+// 	}
+// }
+
+void	handle_redirs(t_cmdnode *cmd_list)
+{
+	int fd;
+	t_redir *redirs = cmd_list->redirs;
+	while (redirs)
+	{
+		if (redirs->type == R_IN)
+		{
+			fd = open(redirs->filename, O_RDONLY);
+			if (fd < 0)
+				perror("open");
+			else
+			{
+				dup2(fd, 0);
+				close(fd);
+			}
+		}
+		if (redirs->type == R_OUT)
+		{
+			fd = open(redirs->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd < 0)
+				perror("open");
+			else
+			{
+				dup2(fd, 1);
+				close(fd);
+			}
+		}
+		if (redirs->type == R_APPEND)
+		{
+			fd = open(redirs->filename, O_WRONLY | O_CREAT | O_APPEND , 0644);
+			if (fd < 0)
+				perror("open");
+			else
+			{
+				dup2(fd, 1);
+				close(fd);
+			}
+		}
+		redirs = redirs->next;
+	}
+}
+
+int main(int ac, char **av, char **envp)
 {
 	(void)ac;
 	(void)av;
-	t_shell	shell;
+	char *input;
 
-	shell.t_envp = envp_to_list(envp);
-	while (1)
+	t_cmdnode *cmd_list;
+	t_cmdnode *current;
+	while (cmd_list)
 	{
-		shell.input = readline("\033[34mMinishel$ \033[0m");
-		if (shell.input)
+		input = readline("minishell$");
+		if (!input)
+			break ;
+		if (*input) // skip empty commands
+			add_history(input);
+		else
 		{
-			if (ft_strchr(shell.input, '|'))
-			{
-				shell.s_input = ft_split(shell.input, '|');
-				handle_pipes(&shell);
-			}
-			else 
-			{
-				shell.s_input = ft_split(shell.input, ' ');
-				if (!check_builtin(&shell))
-					check_exec(&shell);
-			}
-			add_history(shell.input);
+			free(input);
+			continue ;
 		}
-		if (shell.s_input)
-			ft_free(shell.s_input);
+		cmd_list = parse_command_line(input);
+		current = cmd_list;
+		while (current)
+		{
+			if (current->next)
+				
+		}
 	}
-	ft_free(shell.s_input);
-	free(shell.input);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// int	main(int ac, char **av, char **envp)
+// {
+// 	(void)ac;
+// 	(void)av;
+// 	t_shell	shell;
+//
+// 	shell.t_envp = envp_to_list(envp);
+// 	while (1)
+// 	{
+// 		shell.input = readline("\033[34mMinishel$ \033[0m");
+// 		if (shell.input)
+// 		{
+// 			if (ft_strchr(shell.input, '|'))
+// 			{
+// 				shell.s_input = ft_split(shell.input, '|');
+// 				handle_pipes(&shell);
+// 			}
+// 			else 
+// 			{
+// 				shell.s_input = ft_split(shell.input, ' ');
+// 				if (!check_builtin(&shell))
+// 					check_exec(&shell);
+// 			}
+// 			add_history(shell.input);
+// 		}
+// 		if (shell.s_input)
+// 			ft_free(shell.s_input);
+// 	}
+// 	ft_free(shell.s_input);
+// 	free(shell.input);
+// }
+/*==========================================================================*/
 

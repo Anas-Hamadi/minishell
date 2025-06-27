@@ -22,6 +22,29 @@ typedef struct s_shell
 	t_list	*t_envp;
 }	t_shell;
 
+/*==========================New struct===============================*/
+
+/* Type definitions */
+typedef enum e_redir_type {
+    R_IN,       // "< file"
+    R_OUT,      // "> file"
+    R_APPEND    // ">> file"
+} t_redir_type;
+
+typedef struct s_redir {
+    t_redir_type       type;
+    char              *filename;    // or temp-file from heredoc
+    struct s_redir    *next;
+} t_redir;
+
+/* one command (between pipes) */
+typedef struct s_cmdnode {
+    char       **argv;        // NULL-terminated list of args
+    t_redir     *redirs;      // list of <, >, >> (and heredoc temp files)
+    struct s_cmdnode *next;   // next in pipe
+} t_cmdnode;
+
+/*==========================New struct===============================*/
 
 extern char	**g_env;
 
@@ -62,5 +85,6 @@ void	check_exec(t_shell *shell);
 
 char	**list_to_array(t_list *t_envp);
 void	handle_pipes(t_shell *shell);
+void	handle_redirs(t_cmdnode *cmd_list);
 
 # endif
