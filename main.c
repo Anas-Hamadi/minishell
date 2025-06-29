@@ -3,7 +3,6 @@
 #include <readline/history.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "parsing/parse.h"
 
 // will be used later 
 // void	handle_single_redir(char *filename, int flags, int std_fd)
@@ -67,7 +66,7 @@ int main(int ac, char **av, char **envp)
 	(void)av;
 	char *input;
 
-	t_cmdnode *cmd_list;
+	t_cmdnode *cmd_list = NULL;
 	while (true)
 	{
 		input = readline("minishell$");
@@ -81,11 +80,16 @@ int main(int ac, char **av, char **envp)
 			continue ;
 		}
 		cmd_list = parse_command_line(input);
-		while (cmd_list) // loop through commands 
+		t_cmdnode *cur = cmd_list;
+		while (cur)
 		{
-			if (cmd_list) // check for pipes 
-				handle_pipes();
+			cur->envp = envp_to_list(envp);
+			cur = cur->next;
 		}
+		if (cmd_list->next) // check for pipes 
+			handle_pipes(cmd_list);
+		//else if (!check_builtin());
+		//check_exec(); i will add this part later cs these funtions still need modification to work with the new struct;
 	}
 }
 

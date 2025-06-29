@@ -1,4 +1,5 @@
 #include "../minishell.h"
+#include <stdio.h>
 #include <unistd.h>
 
 // // ls | grep .c | wc -l
@@ -72,10 +73,10 @@ void	handle_pipes(t_cmdnode *cmd_list)
 	int prev_fd = -1;
 	char	*cmd_path;
 
-	while (cmd_list->next)
+	while (cmd_list)
 	{
-		pid = fork();
 		pipe(pipefd);
+		pid = fork();
 		if (pid == 0)
 		{
 			if (prev_fd != -1)// if we are on the second token we need to take input from prev_fd
@@ -83,22 +84,34 @@ void	handle_pipes(t_cmdnode *cmd_list)
 				dup2(prev_fd, 0);
 				close(prev_fd);
 			}
-			else // if not then the output will be in the write side of the pipe (pipefd[1])
+			if (cmd_list->next) // if not then the output will be in the write side of the pipe (pipefd[1])
 			{
 				dup2(pipefd[1], 1);
 				close(pipefd[1]);
 			}
 			handle_redirs(cmd_list);
-			cmd_path = find_cmd_path(cmd_list->argv[0], cmd_list->t_envp);
-			// now call execute_cmd 
-			// check for errors
+			cmd_path = find_cmd_path(cmd_list->argv[0], cmd_list->envp);
+			if (!cmd_path)
+			{
+				perror("command not found");
+				exit(127);
+			}
+			execve(cmd_path, cmd_list->argv, list_to_array(cmd_list->envp));
+			perror("execve");
+			exit (127);
 		}
 		else // this is the parent 
 		{
 			if (prev_fd != -1)
 				close(prev_fd);
-			close(pipefd[1]);
-			prev_fd = pipefd[0];
+			if (cmd_list->next)
+			{
+				close(pipefd[1]);
+				prev_fd = pipefd[0];
+			}
 		}
+		cmd_list = cmd_list->next;
 	}
+	while (wait(NULL) > 0)
+		;
 }

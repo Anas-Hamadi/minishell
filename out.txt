@@ -1,10 +1,1 @@
-total 16
-drwxr-xr-x 2 molamham candidates  147 Jun 26 10:19 builtin
-drwxr-xr-x 2 molamham candidates   26 Jun 25 20:20 executable
--rw-r--r-- 1 molamham candidates 1204 Jun 26 10:20 main.c
--rw-r--r-- 1 molamham candidates  760 Jun 25 20:20 Makefile
--rw-r--r-- 1 molamham candidates 2399 Jun 25 20:28 minishell.h
--rw-r--r-- 1 molamham candidates    0 Jun 26 10:37 out.txt
-drwxr-xr-x 4 molamham candidates  173 Jun 25 20:33 parsing
-drwxr-xr-x 2 molamham candidates   21 Jun 25 20:20 pipe
-drwxr-xr-x 2 molamham candidates 4096 Jun 26 10:19 utils
+16
