@@ -51,8 +51,8 @@ typedef struct s_shell
 extern char	**g_env;
 
 void	ft_export(t_list **t_envp, char **input);
-void	ft_cd(t_shell *shell);
-int		check_builtin(t_shell *shell);
+void	ft_cd(t_cmdnode *cmd_list);
+int		check_builtin(t_cmdnode *cmd_list);
 int		ft_strcmp(const char *s1, const char *s2);
 char	**ft_split(char const *s, char c);
 void	ft_free(char **arr);
@@ -63,6 +63,8 @@ char	*ft_strchr(const char *s, int c);
 void	ft_env(t_list *t_envp);
 char	*ft_strchr(const char *s, int c);
 int		ft_atoi(const char *str);
+void	ft_putchar(int c, int fd);
+void	ft_putstr(char *str, int fd);
 void	ft_exit(char **s_input);
 void	*ft_memcpy(void	*dest, const void *src, size_t n);
 char	*ft_strjoin(char const *s1, char const *s2);
@@ -83,10 +85,11 @@ int	ft_lstsize(t_list *lst);
 
 char	*get_path_value(t_list *t_envp);
 char	*find_cmd_path(char *cmd, t_list *t_envp);
-void	check_exec(t_shell *shell);
+void	check_exec(t_cmdnode *cmd_list);
 
 char	**list_to_array(t_list *t_envp);
 void	handle_pipes(t_cmdnode *cmd_list);
 void	handle_redirs(t_cmdnode *cmd_list);
+void	handle_single_cmd(t_cmdnode *cmd_list);
 
 # endif

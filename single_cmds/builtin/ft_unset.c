@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 #include <stdio.h>
 
 int	var_comp(t_list *var_node, char *var_name)

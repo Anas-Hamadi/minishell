@@ -69,7 +69,7 @@ int main(int ac, char **av, char **envp)
 	t_cmdnode *cmd_list = NULL;
 	while (true)
 	{
-		input = readline("minishell$");
+		input = readline("minishell$ ");
 		if (!input)
 			break ;
 		if (*input) // skip empty commands
@@ -88,8 +88,8 @@ int main(int ac, char **av, char **envp)
 		}
 		if (cmd_list->next) // check for pipes 
 			handle_pipes(cmd_list);
-		//else if (!check_builtin());
-		//check_exec(); i will add this part later cs these funtions still need modification to work with the new struct;
+		else
+			handle_single_cmd(cmd_list);
 	}
 }
 

@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 #include <stdio.h>
 
 static bool	check_flag(char **args, int *i)
@@ -42,21 +42,21 @@ static bool	handle_new_line(char **args, int *i)
 	return (print_new_line); // wach gha ndiro new line awla
 }
 
-void	ft_echo(char **s_input)
+void	ft_echo(char **args)
 {
 	int		i;
 	bool	newline;
 
 	i = 1;
-	newline = handle_new_line(s_input, &i); // false means no new line 
-	while (s_input[i])
+	newline = handle_new_line(args, &i); // false means no new line we pass the index i so the nnnnn get skipped 
+	while (args[i])
 	{
-		printf("%s", s_input[i]);
-		if (s_input[i + 1])
+		ft_putstr(args[1], 1);
+		if (args[i + 1])
 			printf(" ");
 		i++;
 	}
 	if (newline == true)
-		printf("\n");
+		ft_putchar('\n', 1);
 }
 

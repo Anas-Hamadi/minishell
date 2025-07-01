@@ -1,4 +1,4 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 
 bool	ft_variable_exist(t_list *t_envp, char *var)
 {

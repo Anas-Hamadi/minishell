@@ -1,11 +1,11 @@
-#include "../minishell.h"
+#include "../../minishell.h"
 #include <unistd.h>
 
 char	**list_to_array(t_list *t_envp)
 {
 	int		i;
 	char	**array;
-	t_list	*tmp;
+t_list	*tmp;
 
 	i = 0;
 	tmp = t_envp;
@@ -98,7 +98,7 @@ void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) //execute_cmd(t
 		waitpid(pid, &status, 0);
 }
 
-void	check_exec(t_shell *shell)//check_exec(char **s_input, t_list *t_envp)
+/*void	check_exec(t_shell *shel)//check_exec(char **s_input, t_list *t_envp)
 {
 	char	*full_path;
 
@@ -118,5 +118,26 @@ void	check_exec(t_shell *shell)//check_exec(char **s_input, t_list *t_envp)
 	else
 		execute_cmd(full_path, shell->s_input, shell->t_envp); //execute_cmd(shell);
 	free(full_path);
-}
+}*/
 
+void	check_exec(t_cmdnode *cmd_list)
+{
+	char *full_path;
+
+	if (!cmd_list->argv)
+		return;
+	if (ft_strchr(cmd_list->argv[0], '/'))
+	{
+		execute_cmd(cmd_list->argv[0], cmd_list->argv, cmd_list->envp);
+		return ;
+	}
+	full_path = find_cmd_path(cmd_list->argv[0], cmd_list->envp);
+	if (!full_path)
+	{
+		ft_putstr("minishell: command not found: %s\n", 2);
+		return ;
+	}
+	else
+		execute_cmd(full_path, cmd_list->argv, cmd_list->envp);
+	free(full_path);
+}
