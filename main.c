@@ -1,7 +1,9 @@
 #include "minishell.h"
+#include "parsing/parse.h"
 #include <fcntl.h>
 #include <readline/history.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 // will be used later 
@@ -60,16 +62,41 @@ void	handle_redirs(t_cmdnode *cmd_list)
 	}
 }
 
+void	start(char *input, char **envp)
+{
+	int			saved_in;
+	int			saved_out;
+	t_cmdnode	*cmd_list;
+	t_cmdnode	*cur;
+
+	saved_in = dup(0);
+	saved_out = dup(1);
+	cmd_list = parse_command_line(input);
+	cur = cmd_list;
+	while (cur)
+	{
+		cur->envp = envp_to_list(envp);
+		cur = cur->next;
+	}
+	if (cmd_list->next)
+		handle_pipes(cmd_list);
+	else
+		handle_single_cmd(cmd_list);
+	dup2(saved_in, 0);
+	dup2(saved_out, 1);
+	close(saved_out);
+	close(saved_in);
+}
+
 int main(int ac, char **av, char **envp)
 {
 	(void)ac;
 	(void)av;
 	char *input;
 
-	t_cmdnode *cmd_list = NULL;
 	while (true)
 	{
-		input = readline(CYAN "minishell$ " RESET);
+		input = readline(YELLOW "minishell$ " RESET);
 		if (!input)
 			break ;
 		if (*input) // skip empty commands
@@ -79,17 +106,8 @@ int main(int ac, char **av, char **envp)
 			free(input);
 			continue ;
 		}
-		cmd_list = parse_command_line(input);
-		t_cmdnode *cur = cmd_list;
-		while (cur)
-		{
-			cur->envp = envp_to_list(envp);
-			cur = cur->next;
-		}
-		if (cmd_list->next) // check for pipes 
-			handle_pipes(cmd_list);
-		else
-			handle_single_cmd(cmd_list);
+		start(input, envp);
+		free(input);
 	}
 }
 

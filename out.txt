@@ -1,0 +1,10 @@
+Makefile
+main.c
+main.o
+minishell
+minishell.h
+out.txt
+parsing
+pipe
+single_cmds
+utils
