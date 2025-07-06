@@ -93,7 +93,7 @@ void	handle_pipes(t_cmdnode *cmd_list)
 			cmd_path = find_cmd_path(cmd_list->argv[0], cmd_list->envp);
 			if (!cmd_path)
 			{
-				perror("command not found");
+				perror(RED "minishell: command not found: " RESET);
 				exit(127);
 			}
 			execve(cmd_path, cmd_list->argv, list_to_array(cmd_list->envp));

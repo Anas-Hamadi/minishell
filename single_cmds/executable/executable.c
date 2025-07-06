@@ -134,7 +134,8 @@ void	check_exec(t_cmdnode *cmd_list)
 	full_path = find_cmd_path(cmd_list->argv[0], cmd_list->envp);
 	if (!full_path)
 	{
-		ft_putstr("minishell: command not found: %s\n", 2);
+		ft_putstr(RED "minishell: command not found: " RESET, 2);
+		ft_putendl_fd(cmd_list->argv[0], 2);
 		return ;
 	}
 	else

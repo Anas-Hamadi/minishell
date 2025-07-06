@@ -48,6 +48,18 @@ typedef struct s_shell
 
 /*==========================New struct===============================*/
 
+# define RESET	"\033[0m"
+# define BLACK	"\033[30m"
+# define RED	"\033[31m"
+# define GREEN	"\033[32m"
+# define YELLOW	"\033[33m"
+# define BLUE	"\033[34m"
+# define MAGENTA	"\033[35m"
+# define CYAN	"\033[36m"
+# define WHITE	"\033[37m"
+# define CYAN	"\033[36m"
+# define RESET	"\033[0m"
+
 extern char	**g_env;
 
 void	ft_export(t_list **t_envp, char **input);
@@ -75,6 +87,7 @@ void	ft_lstfree(t_list *lst);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	**sorted_env(t_list *env);
+void	ft_putendl_fd(char *s, int fd);
 
 t_list	*ft_lstnew(void *content);
 void	ft_lstadd_back(t_list **lst, t_list *t_new);

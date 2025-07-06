@@ -69,7 +69,7 @@ int main(int ac, char **av, char **envp)
 	t_cmdnode *cmd_list = NULL;
 	while (true)
 	{
-		input = readline("minishell$ ");
+		input = readline(CYAN "minishell$ " RESET);
 		if (!input)
 			break ;
 		if (*input) // skip empty commands

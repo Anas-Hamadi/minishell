@@ -1,0 +1,7 @@
+{
+    "editor.parameterHints.enabled": true,
+    "C_Cpp.autocomplete": "Default",
+    "editor.formatOnSave": true,
+    "files.autoSave": "afterDelay",
+    "C_Cpp.intelliSenseEngine": "Default"
+}
