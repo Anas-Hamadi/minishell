@@ -62,7 +62,7 @@ void	handle_redirs(t_cmdnode *cmd_list)
 	}
 }
 
-void	start(char *input, char **envp)
+void	start(char *input, t_list *envp)
 {
 	int			saved_in;
 	int			saved_out;
@@ -75,7 +75,7 @@ void	start(char *input, char **envp)
 	cur = cmd_list;
 	while (cur)
 	{
-		cur->envp = envp_to_list(envp);
+		cur->envp = envp;
 		cur = cur->next;
 	}
 	if (cmd_list->next)
@@ -93,7 +93,9 @@ int main(int ac, char **av, char **envp)
 	(void)ac;
 	(void)av;
 	char *input;
+	t_list	*t_envp;
 
+	t_envp = envp_to_list(envp);
 	while (true)
 	{
 		input = readline(YELLOW "minishell$ " RESET);
@@ -106,7 +108,7 @@ int main(int ac, char **av, char **envp)
 			free(input);
 			continue ;
 		}
-		start(input, envp);
+		start(input, t_envp);
 		free(input);
 	}
 }
