@@ -23,6 +23,8 @@ void	update_env(t_list **envp, char *key, char *value)
 		tmp = tmp->next;
 	}
 	ft_lstadd_back(envp, ft_lstnew(new_str));
+	free(new_str);
+	free(tmp_str);
 }
 
 t_list	*envp_to_list(char **envp)

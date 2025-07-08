@@ -104,5 +104,6 @@ char	**list_to_array(t_list *t_envp);
 void	handle_pipes(t_cmdnode *cmd_list);
 void	handle_redirs(t_cmdnode *cmd_list);
 void	handle_single_cmd(t_cmdnode *cmd_list);
+void	update_env(t_list **envp, char *key, char *value);
 
 # endif
