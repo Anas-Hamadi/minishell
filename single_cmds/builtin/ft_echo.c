@@ -51,9 +51,9 @@ void	ft_echo(char **args)
 	newline = handle_new_line(args, &i); // false means no new line we pass the index i so the nnnnn get skipped 
 	while (args[i])
 	{
-		ft_putstr(args[1], 1);
-		if (args[i + 1])
-			printf(" ");
+		ft_putstr(args[i], 1);
+		if (args[i + 1] != NULL)
+			ft_putchar(' ', 1);
 		i++;
 	}
 	if (newline == true)

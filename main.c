@@ -64,6 +64,7 @@ void	handle_redirs(t_cmdnode *cmd_list)
 
 void	start(char *input, t_list *envp)
 {
+	(void)envp;
 	int			saved_in;
 	int			saved_out;
 	t_cmdnode	*cmd_list;
@@ -72,6 +73,7 @@ void	start(char *input, t_list *envp)
 	saved_in = dup(0);
 	saved_out = dup(1);
 	cmd_list = parse_command_line(input);
+	// printf("%s\n%s\n%s\n", cmd_list->argv[0], cmd_list->argv[1], cmd_list->argv[2]);
 	cur = cmd_list;
 	while (cur)
 	{
