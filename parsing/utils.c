@@ -147,7 +147,7 @@ char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 
 int	get_last_exit_status(void)
 {
-	return (42);
+	return (0);
 }
 char	*expand_variable(char **cmd)
 {

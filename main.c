@@ -64,7 +64,6 @@ void	handle_redirs(t_cmdnode *cmd_list)
 
 void	start(char *input, t_list *envp)
 {
-	(void)envp;
 	int			saved_in;
 	int			saved_out;
 	t_cmdnode	*cmd_list;
