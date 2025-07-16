@@ -106,4 +106,7 @@ void	handle_redirs(t_cmdnode *cmd_list);
 void	handle_single_cmd(t_cmdnode *cmd_list);
 void	update_env(t_list **envp, char *key, char *value);
 
+
+void	free_cmd_list(t_cmdnode *cmd_list);
+
 # endif

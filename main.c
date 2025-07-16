@@ -69,6 +69,8 @@ void	start(char *input, t_list *envp)
 	t_cmdnode	*cmd_list;
 	t_cmdnode	*cur;
 
+//	int			exit_status;
+
 	saved_in = dup(0);
 	saved_out = dup(1);
 	cmd_list = parse_command_line(input);
@@ -85,8 +87,13 @@ void	start(char *input, t_list *envp)
 		handle_single_cmd(cmd_list);
 	dup2(saved_in, 0);
 	dup2(saved_out, 1);
-	close(saved_out);
-	close(saved_in);
+
+	// WARN: close might be wrong (dup() sys call no need to close)
+	// close(saved_out);
+	// close(saved_in);
+
+
+	free_cmd_list(cmd_list);
 }
 
 int main(int ac, char **av, char **envp)
@@ -97,14 +104,22 @@ int main(int ac, char **av, char **envp)
 	t_list	*t_envp;
 
 	t_envp = envp_to_list(envp);
-	while (true)
+
+
+
+
+
+	while (true) // infinite loop to read and execute commands
 	{
 		input = readline(YELLOW "minishell$ " RESET);
-		if (!input)
+
+		if (!input) // ctrl+d end of file
 			break ;
-		if (*input) // skip empty commands
+
+		if (*input) 
 			add_history(input);
-		else
+
+		else // skip empty commands
 		{
 			free(input);
 			continue ;
@@ -113,88 +128,4 @@ int main(int ac, char **av, char **envp)
 		free(input);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// int	main(int ac, char **av, char **envp)
-// {
-// 	(void)ac;
-// 	(void)av;
-// 	t_shell	shell;
-//
-// 	shell.t_envp = envp_to_list(envp);
-// 	while (1)
-// 	{
-// 		shell.input = readline("\033[34mMinishel$ \033[0m");
-// 		if (shell.input)
-// 		{
-// 			if (ft_strchr(shell.input, '|'))
-// 			{
-// 				shell.s_input = ft_split(shell.input, '|');
-// 				handle_pipes(&shell);
-// 			}
-// 			else 
-// 			{
-// 				shell.s_input = ft_split(shell.input, ' ');
-// 				if (!check_builtin(&shell))
-// 					check_exec(&shell);
-// 			}
-// 			add_history(shell.input);
-// 		}
-// 		if (shell.s_input)
-// 			ft_free(shell.s_input);
-// 	}
-// 	ft_free(shell.s_input);
-// 	free(shell.input);
-// }
-/*==========================================================================*/
 

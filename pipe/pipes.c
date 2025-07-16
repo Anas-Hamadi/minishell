@@ -90,17 +90,8 @@ void	handle_pipes(t_cmdnode *cmd_list)
 				close(pipefd[1]);
 			}
 			handle_redirs(cmd_list);
-			// cmd_path = find_cmd_path(cmd_list->argv[0], cmd_list->envp);
-			// if (!cmd_path)
-			// {
-			// 	printf("here\n");
-			// 	perror("minishell: command not found: ");
-			// 	exit(127);
-			// }
 			if (!check_builtin(cmd_list))
 				check_exec(cmd_list);
-			//execve(cmd_path, cmd_list->argv, list_to_array(cmd_list->envp));
-			//perror("execve");
 			exit (127);
 		}
 		else // this is the parent 

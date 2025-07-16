@@ -167,7 +167,10 @@ char	*expand_variable(char **cmd)
 		value = malloc(12);
 		if (!value)
 			return (NULL);
+
+		// WARNING: snprintf not allowed
 		snprintf(value, 12, "%d", get_last_exit_status());
+
 		// free(mark);
 		return (value);
 	}

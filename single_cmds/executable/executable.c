@@ -32,12 +32,16 @@ t_list	*tmp;
 char	*get_path_value(t_list *t_envp)
 {
 	t_list	*tmp;
+	char	*path;
 
 	tmp = t_envp;
 	while (tmp)
 	{
 		if (ft_strncmp(tmp->content, "PATH=", 5) == 0)
-			return (ft_strdup(tmp->content + 5));
+		{
+			path = ft_strdup(tmp->content + 5);
+			return (path);
+		}
 		tmp = tmp->next;
 	}
 	return (NULL);
@@ -95,30 +99,15 @@ void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) //execute_cmd(t
 		exit(127);//Code 127 is like the classic “command not found” exit status in Unix/Linux shells.
 	}
 	else
+	{
 		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+				status = WTERMSIG(status);
+		// if signaled check to change the exit status to 130 or 131
+	}
 }
-
-/*void	check_exec(t_shell *shel)//check_exec(char **s_input, t_list *t_envp)
-{
-	char	*full_path;
-
-	if (!shell->s_input || !shell->s_input[0])
-		return ;
-	if (shell->s_input[0][0] == '/' || ft_strchr(shell->s_input[0], '/'))
-	{
-		execute_cmd(shell->s_input[0], shell->s_input, shell->t_envp);//execute_cmd(shell);
-		return ;
-	}
-	full_path = find_cmd_path(shell->s_input[0], shell->t_envp); //find_cmd_path(shell);
-	if (!full_path)
-	{
-		printf("minishell: command not found: %s\n", shell->s_input[0]);
-		return ;
-	}
-	else
-		execute_cmd(full_path, shell->s_input, shell->t_envp); //execute_cmd(shell);
-	free(full_path);
-}*/
 
 void	check_exec(t_cmdnode *cmd_list)
 {
