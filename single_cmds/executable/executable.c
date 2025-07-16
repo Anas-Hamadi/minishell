@@ -109,25 +109,25 @@ void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) //execute_cmd(t
 	}
 }
 
-void	check_exec(t_cmdnode *cmd_list)
+void	check_exec(t_shell *shell)
 {
 	char *full_path;
 
-	if (!cmd_list->argv)
+	if (!shell->cmds->argv)
 		return;
-	if (ft_strchr(cmd_list->argv[0], '/'))
+	if (ft_strchr(shell->cmds->argv[0], '/'))
 	{
-		execute_cmd(cmd_list->argv[0], cmd_list->argv, cmd_list->envp);
+		execute_cmd(shell->cmds->argv[0], shell->cmds->argv, shell->envp);
 		return ;
 	}
-	full_path = find_cmd_path(cmd_list->argv[0], cmd_list->envp);
+	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
 	if (!full_path)
 	{
 		ft_putstr(RED "minishell: command not found: " RESET, 2);
-		ft_putendl_fd(cmd_list->argv[0], 2);
+		ft_putendl_fd(shell->cmds->argv[0], 2);
 		return ;
 	}
 	else
-		execute_cmd(full_path, cmd_list->argv, cmd_list->envp);
+		execute_cmd(full_path, shell->cmds->argv, shell->envp);
 	free(full_path);
 }

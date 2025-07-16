@@ -3,5 +3,8 @@
     "C_Cpp.autocomplete": "Default",
     "editor.formatOnSave": true,
     "files.autoSave": "afterDelay",
-    "C_Cpp.intelliSenseEngine": "Default"
+    "C_Cpp.intelliSenseEngine": "Default",
+    "files.associations": {
+        "unistd.h": "c"
+    }
 }

@@ -72,12 +72,12 @@ void	update_cd_env(t_list **envp, char *oldpwd)
 	free(newpwd);
 }
 
-void	ft_cd(t_cmdnode *cmd_list)
+void	ft_cd(t_shell *shell)
 {
 	char	*path;
 	char	*oldpwd;
 
-	path = get_target_path(cmd_list->argv);
+	path = get_target_path(shell->cmds->argv);
 	if (!path)
 		return ;
 	oldpwd = getcwd(NULL, 0);
@@ -92,6 +92,6 @@ void	ft_cd(t_cmdnode *cmd_list)
 		free(oldpwd);
 		return ;
 	}
-	update_cd_env(&cmd_list->envp, oldpwd);
+	update_cd_env(&shell->envp, oldpwd);
 	free(oldpwd);
 } 

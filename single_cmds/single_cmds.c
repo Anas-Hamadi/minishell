@@ -1,12 +1,12 @@
 #include "../minishell.h"
 #include <unistd.h>
 
-void	handle_single_cmd(t_cmdnode *cmd_list)
+void handle_single_cmd(t_shell *shell)
 {
-	if (cmd_list->redirs)
-		handle_redirs(cmd_list);
-	if (!cmd_list->argv || !cmd_list->argv[0])
-		return ;
-	if (!check_builtin(cmd_list))
-		check_exec(cmd_list);
+	if (shell->cmds->redirs)
+		handle_redirs(shell);
+	if (!shell->cmds->argv || !shell->cmds->argv[0])
+		return;
+	if (!check_builtin(shell))
+		check_exec(shell);
 }

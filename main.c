@@ -19,10 +19,10 @@
 // 	}
 // }
 
-void	handle_redirs(t_cmdnode *cmd_list)
+void	handle_redirs(t_shell *shell)
 {
 	int fd;
-	t_redir *redirs = cmd_list->redirs;
+	t_redir *redirs = shell->cmds->redirs;
 	while (redirs)
 	{
 		if (redirs->type == R_IN)
@@ -62,29 +62,18 @@ void	handle_redirs(t_cmdnode *cmd_list)
 	}
 }
 
-void	start(char *input, t_list *envp)
+void	start(t_shell *shell)
 {
 	int			saved_in;
 	int			saved_out;
-	t_cmdnode	*cmd_list;
-	t_cmdnode	*cur;
-
-//	int			exit_status;
 
 	saved_in = dup(0);
 	saved_out = dup(1);
-	cmd_list = parse_command_line(input);
-	// printf("%s\n%s\n%s\n", cmd_list->argv[0], cmd_list->argv[1], cmd_list->argv[2]);
-	cur = cmd_list;
-	while (cur)
-	{
-		cur->envp = envp;
-		cur = cur->next;
-	}
-	if (cmd_list->next)
-		handle_pipes(cmd_list);
+	shell->cmds = parse_command_line(shell->input);
+	if (shell->cmds->next)
+		handle_pipes(shell);
 	else
-		handle_single_cmd(cmd_list);
+		handle_single_cmd(shell);
 	dup2(saved_in, 0);
 	dup2(saved_out, 1);
 
@@ -93,39 +82,33 @@ void	start(char *input, t_list *envp)
 	// close(saved_in);
 
 
-	free_cmd_list(cmd_list);
+	//free_cmd_list(cmd_list);
 }
 
 int main(int ac, char **av, char **envp)
 {
 	(void)ac;
 	(void)av;
-	char *input;
-	t_list	*t_envp;
+	t_shell shell;
 
-	t_envp = envp_to_list(envp);
-
-
-
-
-
+	shell.envp = envp_to_list(envp);
 	while (true) // infinite loop to read and execute commands
 	{
-		input = readline(YELLOW "minishell$ " RESET);
+		shell.input = readline(YELLOW "minishell$ " RESET);
 
-		if (!input) // ctrl+d end of file
+		if (!shell.input) // ctrl+d end of file
 			break ;
 
-		if (*input) 
-			add_history(input);
+		if (*shell.input) 
+			add_history(shell.input);
 
 		else // skip empty commands
 		{
-			free(input);
+			free(shell.input);
 			continue ;
 		}
-		start(input, t_envp);
-		free(input);
+		start(&shell);
+		free(shell.input);
 	}
 }
 

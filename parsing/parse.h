@@ -39,7 +39,6 @@ typedef struct s_redir {
 
 /* one command (between pipes) */
 typedef struct s_cmdnode {
-    t_list *envp;
     char       **argv;        // NULL-terminated list of args
     t_redir     *redirs;      // list of <, >, >> (and heredoc temp files)
     struct s_cmdnode *next;   // next in pipe
