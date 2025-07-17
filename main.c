@@ -74,6 +74,8 @@ void	start(t_shell *shell)
 		handle_pipes(shell);
 	else
 		handle_single_cmd(shell);
+	free_cmd_list(shell->cmds);
+	shell->cmds = NULL;
 	dup2(saved_in, 0);
 	dup2(saved_out, 1);
 

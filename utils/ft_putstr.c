@@ -6,7 +6,7 @@ void	ft_putchar(int c, int fd)
 	write(1, &c, fd);
 }
 
-void	ft_putstr(char *str, int fd)
+void	ft_putstr_fd(char *str, int fd)
 {
 	int	i;
 

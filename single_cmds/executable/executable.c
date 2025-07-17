@@ -47,21 +47,29 @@ char	*get_path_value(t_list *t_envp)
 	return (NULL);
 }
 
-char	*find_cmd_path(char *cmd, t_list *t_envp) //*find_cmd_path(t_shell *shell)
+char	*find_cmd_path(char *cmd, t_list *t_envp)
 {
 	int		i;
 	char	**paths;
 	char	*full_patch;
+	char	*tmp;
+	char	*path_value;
 
-	paths = ft_split(get_path_value(t_envp), ':');
+	path_value = get_path_value(t_envp);
+	if (!path_value)
+		return (NULL);
+	paths = ft_split(path_value, ':');
+	free(path_value);  // <--- free it here to avoid the leak
 	if (!paths)
 		return (NULL);
 	i = 0;
 	while (paths[i])
 	{
-		full_patch = ft_strjoin(paths[i], "/"); // add '/' to the path to try and create a full cmd path and check if its valid.
-		full_patch = ft_strjoin(full_patch, cmd);
-		if (access(full_patch, X_OK) == 0)  // access : system call that checks your permissions for a file.
+		tmp = ft_strjoin(paths[i], "/");
+		full_patch = ft_strjoin(tmp, cmd);
+		free(tmp);   // free intermediate string
+
+		if (access(full_patch, X_OK) == 0)
 		{
 			ft_free(paths);
 			return (full_patch);
@@ -123,7 +131,7 @@ void	check_exec(t_shell *shell)
 	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
 	if (!full_path)
 	{
-		ft_putstr(RED "minishell: command not found: " RESET, 2);
+		ft_putstr_fd(RED "minishell: command not found: " RESET, 2);
 		ft_putendl_fd(shell->cmds->argv[0], 2);
 		return ;
 	}

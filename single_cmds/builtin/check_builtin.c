@@ -2,6 +2,8 @@
 
 int check_builtin(t_shell *shell)
 {
+	// if (!shell->cmds->argv[0])
+	// 	return (0);
 	if (shell->cmds->argv[0] && !ft_strcmp(shell->cmds->argv[0], "cd"))
 		ft_cd(shell);
 	else if (shell->cmds->argv[0] && !ft_strcmp(shell->cmds->argv[0], "echo"))
@@ -11,7 +13,7 @@ int check_builtin(t_shell *shell)
 	else if (shell->cmds->argv[0] && !ft_strcmp(shell->cmds->argv[0], "env"))
 		ft_env(shell->envp);
 	else if (shell->cmds->argv[0] && !ft_strcmp(shell->cmds->argv[0], "exit"))
-		ft_exit(shell->cmds->argv); // still need re-do ???
+		ft_exit(shell); // still need re-do ???
 	else if (shell->cmds->argv[0] && !ft_strcmp(shell->cmds->argv[0], "unset"))
 		ft_unset(shell->cmds->argv, shell->envp);
 	else if (shell->cmds->argv[0] && !ft_strcmp(shell->cmds->argv[0], "export"))

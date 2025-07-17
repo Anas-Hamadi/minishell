@@ -10,43 +10,39 @@ int	ft_isvalid_arg(char *arg)
 	while (arg[i])
 	{
 		if (!(arg[i] >= '0' && arg[i] <= '9'))
-			return (1);
+			return (0);
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
-void	ft_exit_error(char **s_input)
+static void	ft_exit_error(t_shell *shell, char *arg)
 {
-	if (ft_isvalid_arg(s_input[1]) == 1)
-	{
-		printf("minishell: exit: %s: numeric argument required\n", s_input[1]);
-		ft_free(s_input);
-		exit(255);
-	}
-	else if (s_input[1] && s_input[2])
-		printf("minishell: exit: too many arguments\n");
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putendl_fd(": numeric argument required", 2);
+	free_shell(shell);
+	exit(255);
 }
 
-void	ft_exit(char **s_input)
+void	ft_exit(t_shell *shell)
 {
-	long long	num;
+	char		**argv;
+	long long	exit_code;
 
-	num = 0;
-	if (!s_input[1])
+	argv = shell->cmds->argv;
+	exit_code = 0;
+	ft_putendl_fd("exit", 1);
+	if (argv[1] && !ft_isvalid_arg(argv[1]))
+		ft_exit_error(shell, argv[1]);
+	if (argv[1] && argv[2])
 	{
-		ft_free(s_input);
-		exit(0);
+		ft_putendl_fd("minishell: exit: too many arguments", 2);
+		return ;
 	}
-	else if (ft_isvalid_arg(s_input[1]) == 0 && !s_input[2])
-	{
-		num = ft_atoi(s_input[1]);
-		if (num < INT_MAX && num > INT_MIN)
-		{
-			ft_free(s_input);
-			exit(num);
-		}
-	}
-	else
-		ft_exit_error(s_input);
+	if (argv[1])
+		exit_code = ft_atoi(argv[1]);
+	free_shell(shell);
+	exit(exit_code);
 }
+

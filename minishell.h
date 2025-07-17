@@ -72,8 +72,8 @@ void ft_env(t_list *t_envp);
 char *ft_strchr(const char *s, int c);
 int ft_atoi(const char *str);
 void ft_putchar(int c, int fd);
-void ft_putstr(char *str, int fd);
-void ft_exit(char **s_input);
+void	ft_putstr_fd(char *str, int fd);
+void ft_exit(t_shell *shell);
 void *ft_memcpy(void *dest, const void *src, size_t n);
 char *ft_strjoin(char const *s1, char const *s2);
 char *ft_strrchr(const char *s, int c);
@@ -90,6 +90,7 @@ void ft_lstadd_back(t_list **lst, t_list *t_new);
 t_list *ft_lstlast(t_list *lst);
 t_list *envp_to_list(char **envp);
 int ft_lstsize(t_list *lst);
+void ft_lstclear(t_list **lst, void (*del)(void *));
 
 char *get_path_value(t_list *t_envp);
 char *find_cmd_path(char *cmd, t_list *t_envp);
@@ -101,6 +102,6 @@ void handle_redirs(t_shell *shell);
 void	handle_single_cmd(t_shell *shell);
 void update_env(t_list **envp, char *key, char *value);
 
-void free_cmd_list(t_cmdnode *cmd_list);
+void free_shell(t_shell *shell);
 
 #endif

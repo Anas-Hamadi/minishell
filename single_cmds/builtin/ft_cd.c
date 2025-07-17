@@ -38,9 +38,9 @@
 // 		perror("cd");
 // }
 
-char	*get_target_path(char **argv)
+char *get_target_path(char **argv)
 {
-	char	*home;
+	char *home;
 
 	if (argv[1])
 		return (argv[1]);
@@ -56,42 +56,43 @@ char	*get_target_path(char **argv)
 	}
 }
 
-void	update_cd_env(t_list **envp, char *oldpwd)
+void update_cd_env(t_list **envp, char *oldpwd)
 {
-	char	*newpwd;
+	char *newpwd;
 
 	newpwd = getcwd(NULL, 0);
 	if (!newpwd)
 	{
 		perror("getcwd");
-		free (oldpwd);
-		return ;
+		free(oldpwd);
+		return;
 	}
+
 	update_env(envp, "OLDPWD", oldpwd);
 	update_env(envp, "PWD", newpwd);
 	free(newpwd);
 }
 
-void	ft_cd(t_shell *shell)
+void ft_cd(t_shell *shell)
 {
-	char	*path;
-	char	*oldpwd;
+	char *path;
+	char *oldpwd;
 
 	path = get_target_path(shell->cmds->argv);
 	if (!path)
-		return ;
+		return;
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 	{
 		perror("getcwd");
-		return ;
+		return;
 	}
 	if (chdir(path) != 0)
 	{
 		perror("cd");
 		free(oldpwd);
-		return ;
+		return;
 	}
 	update_cd_env(&shell->envp, oldpwd);
 	free(oldpwd);
-} 
+}
