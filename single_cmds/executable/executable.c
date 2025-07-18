@@ -109,10 +109,10 @@ void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) //execute_cmd(t
 	else
 	{
 		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-				status = WTERMSIG(status);
+		if (WIFEXITED(status)) //Did the child exit normally?
+			status = WEXITSTATUS(status);// Get the exit code from the child.
+		else if (WIFSIGNALED(status)) //Did the child get killed by a signal (like Ctrl+C)?
+				status = WTERMSIG(status); // Get the signal number that killed the child.
 		// if signaled check to change the exit status to 130 or 131
 	}
 }
