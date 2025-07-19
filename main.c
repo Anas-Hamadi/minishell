@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/18 12:33:59 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/19 12:04:26 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	handle_single_redir(char *filename, int flags, int std_fd)
+void handle_single_redir(char *filename, int flags, int std_fd)
 {
-	int	fd;
+	int fd;
 
 	fd = open(filename, flags, 0644);
 	if (fd < 0)
@@ -32,9 +32,9 @@ void	handle_single_redir(char *filename, int flags, int std_fd)
 	}
 }
 
-void	handle_redirs(t_shell *shell)
+void handle_redirs(t_shell *shell)
 {
-	t_redir	*redirs;
+	t_redir *redirs;
 
 	redirs = shell->cmds->redirs;
 	while (redirs)
@@ -43,22 +43,31 @@ void	handle_redirs(t_shell *shell)
 			handle_single_redir(redirs->filename, O_RDONLY, 0);
 		else if (redirs->type == R_OUT)
 			handle_single_redir(redirs->filename,
-				O_WRONLY | O_CREAT | O_TRUNC, 1);
+								O_WRONLY | O_CREAT | O_TRUNC, 1);
 		else if (redirs->type == R_APPEND)
 			handle_single_redir(redirs->filename,
-				O_WRONLY | O_CREAT | O_APPEND, 1);
+								O_WRONLY | O_CREAT | O_APPEND, 1);
 		redirs = redirs->next;
 	}
 }
 
-void	start(t_shell *shell)
+void start(t_shell *shell)
 {
-	int			saved_in;
-	int			saved_out;
+	int saved_in;
+	int saved_out;
 
 	saved_in = dup(0);
 	saved_out = dup(1);
 	shell->cmds = parse_command_line(shell->input);
+	if (shell->cmds == NULL)
+	{
+		ft_putstr_fd(RED "minishell: parse error\n" RESET, 2);
+		dup2(saved_in, 0);
+		dup2(saved_out, 1);
+		close(saved_in);
+		close(saved_out);
+		return;
+	}
 	if (shell->cmds->next)
 		handle_pipes(shell);
 	else
@@ -71,9 +80,9 @@ void	start(t_shell *shell)
 	close(saved_out);
 }
 
-int	main(int ac, char **av, char **envp)
+int main(int ac, char **av, char **envp)
 {
-	t_shell	shell;
+	t_shell shell;
 
 	(void)ac;
 	(void)av;
@@ -82,13 +91,13 @@ int	main(int ac, char **av, char **envp)
 	{
 		shell.input = readline(YELLOW "minishell$ " RESET);
 		if (!shell.input) // ctrl+d end of file
-			break ;
+			break;
 		if (*shell.input)
 			add_history(shell.input);
 		else // skip empty commands
 		{
 			free(shell.input);
-			continue ;
+			continue;
 		}
 		start(&shell);
 		free(shell.input);

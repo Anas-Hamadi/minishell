@@ -1,11 +1,11 @@
 #include "../../minishell.h"
 #include <unistd.h>
 
-char	**list_to_array(t_list *t_envp)
+char **list_to_array(t_list *t_envp)
 {
-	int		i;
-	char	**array;
-t_list	*tmp;
+	int i;
+	char **array;
+	t_list *tmp;
 
 	i = 0;
 	tmp = t_envp;
@@ -14,7 +14,7 @@ t_list	*tmp;
 		i++;
 		tmp = tmp->next;
 	}
-	array = malloc (sizeof(char *) * (i + 1));
+	array = malloc(sizeof(char *) * (i + 1));
 	if (!array)
 		return (NULL);
 	i = 0;
@@ -29,10 +29,10 @@ t_list	*tmp;
 	return (array);
 }
 
-char	*get_path_value(t_list *t_envp)
+char *get_path_value(t_list *t_envp)
 {
-	t_list	*tmp;
-	char	*path;
+	t_list *tmp;
+	char *path;
 
 	tmp = t_envp;
 	while (tmp)
@@ -47,19 +47,19 @@ char	*get_path_value(t_list *t_envp)
 	return (NULL);
 }
 
-char	*find_cmd_path(char *cmd, t_list *t_envp)
+char *find_cmd_path(char *cmd, t_list *t_envp)
 {
-	int		i;
-	char	**paths;
-	char	*full_patch;
-	char	*tmp;
-	char	*path_value;
+	int i;
+	char **paths;
+	char *full_patch;
+	char *tmp;
+	char *path_value;
 
 	path_value = get_path_value(t_envp);
 	if (!path_value)
 		return (NULL);
 	paths = ft_split(path_value, ':');
-	free(path_value);  // <--- free it here to avoid the leak
+	free(path_value); // <--- free it here to avoid the leak
 	if (!paths)
 		return (NULL);
 	i = 0;
@@ -67,7 +67,7 @@ char	*find_cmd_path(char *cmd, t_list *t_envp)
 	{
 		tmp = ft_strjoin(paths[i], "/");
 		full_patch = ft_strjoin(tmp, cmd);
-		free(tmp);   // free intermediate string
+		free(tmp); // free intermediate string
 
 		if (access(full_patch, X_OK) == 0)
 		{
@@ -81,22 +81,22 @@ char	*find_cmd_path(char *cmd, t_list *t_envp)
 	return (NULL);
 }
 
-void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) //execute_cmd(t_shell *shell)
+void execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) // execute_cmd(t_shell *shell)
 {
-	int		status;
-	int		pid;
-	char	**env_array;
+	int status;
+	int pid;
+	char **env_array;
 
 	pid = fork();
 	if (pid < 0)
 	{
 		perror("fork");
-		return ;
+		return;
 	}
 	if (pid == 0)
 	{
-		env_array = list_to_array(t_envp); //env_array = shell->s_input;
-		if (access(cmd_path, X_OK) == 0) //(access(shell->s_input[0], X_OK) == 0)
+		env_array = list_to_array(t_envp); // env_array = shell->s_input;
+		if (access(cmd_path, X_OK) == 0)   //(access(shell->s_input[0], X_OK) == 0)
 		{
 			execve(cmd_path, s_input, env_array);
 			perror("execve");
@@ -104,20 +104,20 @@ void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) //execute_cmd(t
 		else
 			printf("minishell: %s: Permission denied or file not found\n", s_input[0]);
 		ft_free(env_array);
-		exit(127);//Code 127 is like the classic “command not found” exit status in Unix/Linux shells.
+		exit(127); // Code 127 is like the classic “command not found” exit status in Unix/Linux shells.
 	}
 	else
 	{
 		waitpid(pid, &status, 0);
-		if (WIFEXITED(status)) //Did the child exit normally?
-			status = WEXITSTATUS(status);// Get the exit code from the child.
-		else if (WIFSIGNALED(status)) //Did the child get killed by a signal (like Ctrl+C)?
-				status = WTERMSIG(status); // Get the signal number that killed the child.
-		// if signaled check to change the exit status to 130 or 131
+		if (WIFEXITED(status))			  // Did the child exit normally?
+			status = WEXITSTATUS(status); // Get the exit code from the child.
+		else if (WIFSIGNALED(status))	  // Did the child get killed by a signal (like Ctrl+C)?
+			status = WTERMSIG(status);	  // Get the signal number that killed the child.
+										  // if signaled check to change the exit status to 130 or 131
 	}
 }
 
-void	check_exec(t_shell *shell)
+void check_exec(t_shell *shell)
 {
 	char *full_path;
 
@@ -126,16 +126,18 @@ void	check_exec(t_shell *shell)
 	if (ft_strchr(shell->cmds->argv[0], '/'))
 	{
 		execute_cmd(shell->cmds->argv[0], shell->cmds->argv, shell->envp);
-		return ;
+		return;
 	}
 	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
 	if (!full_path)
 	{
 		ft_putstr_fd(RED "minishell: command not found: " RESET, 2);
 		ft_putendl_fd(shell->cmds->argv[0], 2);
-		return ;
+		return;
 	}
 	else
+	{
 		execute_cmd(full_path, shell->cmds->argv, shell->envp);
+	}
 	free(full_path);
 }
