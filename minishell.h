@@ -8,6 +8,7 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <sys/wait.h>
+#include <signal.h>
 #include "parsing/parse.h"
 
 typedef struct s_shell
@@ -103,5 +104,9 @@ void	handle_single_cmd(t_shell *shell);
 void update_env(t_list **envp, char *key, char *value);
 
 void free_shell(t_shell *shell);
+
+void handle_single_redir(char *filename, int flags, int std_fd);
+void handle_redirs(t_shell *shell);
+
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/19 12:04:26 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/19 16:35:32 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,36 +18,23 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void handle_single_redir(char *filename, int flags, int std_fd)
+void init_shell(t_shell *shell, char **envp)
 {
-	int fd;
-
-	fd = open(filename, flags, 0644);
-	if (fd < 0)
-		perror("open");
-	else
-	{
-		dup2(fd, std_fd);
-		close(fd);
-	}
+	shell->envp_list = envp_to_list(envp);
+	shell->envp = shell->envp_list;
+	shell->cmds = NULL;
+	shell->input = NULL;
+	shell->exit_code = 0;
 }
 
-void handle_redirs(t_shell *shell)
+void sigint_handler(int signum)
 {
-	t_redir *redirs;
-
-	redirs = shell->cmds->redirs;
-	while (redirs)
+	if (signum == SIGINT)
 	{
-		if (redirs->type == R_IN)
-			handle_single_redir(redirs->filename, O_RDONLY, 0);
-		else if (redirs->type == R_OUT)
-			handle_single_redir(redirs->filename,
-								O_WRONLY | O_CREAT | O_TRUNC, 1);
-		else if (redirs->type == R_APPEND)
-			handle_single_redir(redirs->filename,
-								O_WRONLY | O_CREAT | O_APPEND, 1);
-		redirs = redirs->next;
+		write(1, "\n", 1);		// Print a newline on Ctrl+C
+		rl_replace_line("", 0); // Clear the current line in readline
+		rl_on_new_line();		// Move to a new line
+		rl_redisplay();			// Redisplay the prompt
 	}
 }
 
@@ -86,7 +73,8 @@ int main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	shell.envp = envp_to_list(envp);
+	signal(SIGINT, sigint_handler); // Handle Ctrl+C
+	init_shell(&shell, envp);
 	while (true) // infinite loop to read and execute commands
 	{
 		shell.input = readline(YELLOW "minishell$ " RESET);
@@ -100,6 +88,6 @@ int main(int ac, char **av, char **envp)
 			continue;
 		}
 		start(&shell);
-		free(shell.input);
 	}
+	free_shell(&shell); // Free all allocated memory
 }

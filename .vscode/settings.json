@@ -5,6 +5,7 @@
     "files.autoSave": "afterDelay",
     "C_Cpp.intelliSenseEngine": "Default",
     "files.associations": {
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "history.h": "c"
     }
 }
