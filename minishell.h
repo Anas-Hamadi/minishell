@@ -108,5 +108,4 @@ void free_shell(t_shell *shell);
 void handle_single_redir(char *filename, int flags, int std_fd);
 void handle_redirs(t_shell *shell);
 
-
 #endif

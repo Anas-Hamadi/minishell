@@ -81,7 +81,7 @@ char *find_cmd_path(char *cmd, t_list *t_envp)
 	return (NULL);
 }
 
-void execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) // execute_cmd(t_shell *shell)
+void execute_cmd(char *cmd_path, char **s_input, t_list *t_envp, t_shell *shell) // execute_cmd(t_shell *shell)
 {
 	int status;
 	int pid;
@@ -110,12 +110,12 @@ void execute_cmd(char *cmd_path, char **s_input, t_list *t_envp) // execute_cmd(
 	{
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))			  // Did the child exit normally?
-			status = WEXITSTATUS(status); // Get the exit code from the child.
+			shell->exit_code = WEXITSTATUS(status); // Get the exit code from the child.
 		else if (WIFSIGNALED(status))	  // Did the child get killed by a signal (like Ctrl+C)?
-			status = WTERMSIG(status);	  // Get the signal number that killed the child.
-										  // if signaled check to change the exit status to 130 or 131
+			shell->exit_code = WTERMSIG(status); // Get the signal number that killed the child.
 	}
 }
+
 
 void check_exec(t_shell *shell)
 {
@@ -125,7 +125,7 @@ void check_exec(t_shell *shell)
 		return;
 	if (ft_strchr(shell->cmds->argv[0], '/'))
 	{
-		execute_cmd(shell->cmds->argv[0], shell->cmds->argv, shell->envp);
+		execute_cmd(shell->cmds->argv[0], shell->cmds->argv, shell->envp, shell);
 		return;
 	}
 	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
@@ -137,7 +137,7 @@ void check_exec(t_shell *shell)
 	}
 	else
 	{
-		execute_cmd(full_path, shell->cmds->argv, shell->envp);
+		execute_cmd(full_path, shell->cmds->argv, shell->envp, shell);
 	}
 	free(full_path);
 }
