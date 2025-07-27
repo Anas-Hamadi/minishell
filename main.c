@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/27 10:33:56 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/27 21:22:17 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	sigint_handler(int signum)
 	}
 }
 
-void signal_handler(int signum)
+void	signal_handler(int signum)
 {
 	(void) signum;
 }

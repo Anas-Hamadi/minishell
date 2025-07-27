@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:45:24 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:45:35 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/27 21:18:43 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,8 @@ void	ft_unset(char **s_input, t_list *t_envp)
 	var_name = set_var_name(s_input);
 	if (!s_input[1])
 	{
-		printf("unset: not enough arguments\n");
+		ft_putstr_fd("minishell: unset: not enough arguments\n", 2);
+		free(var_name);
 		return ;
 	}
 	else
@@ -107,8 +108,9 @@ void	ft_unset(char **s_input, t_list *t_envp)
 			if (check_var(t_envp, var_name[i]) == 0)
 				delvar(&t_envp, var_name[i]);
 			else
-				printf("Var not found\n");
+				ft_putstr_fd("var not found\n", 2);
 			i++;
 		}
 	}
+	ft_free(var_name);
 }

@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:44:55 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/27 21:00:15 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/27 21:14:11 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	ft_export(t_list **t_envp, char **input)
 			if (ft_variable_exist(*t_envp, input[y]))
 				ft_add_ex_var(t_envp, input[y]);
 			else
-				ft_lstadd_back(t_envp, ft_lstnew(input[y]));
+				ft_lstadd_back(t_envp, ft_lstnew(ft_strdup(input[y])));
 			y++;
 		}
 	}

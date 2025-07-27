@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:45:03 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:46:19 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/27 21:07:01 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,12 @@ void	ft_pwd(char **s_input)
 	}
 	else if (s_input[0] && s_input[1])
 	{
-		printf("minishell: pwd: too many arguments\n");
+		ft_putstr_fd("minishell: pwd: too many arguments\n", 2);
+		free(cwd);
 		ft_free(s_input);
 		return ;
 	}
-	printf("%s\n", cwd);
+	ft_putstr_fd(cwd, 1);
+	ft_putstr_fd("\n", 1);
+	free(cwd);
 }
