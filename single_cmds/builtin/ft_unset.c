@@ -1,11 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/26 15:45:24 by molamham          #+#    #+#             */
+/*   Updated: 2025/07/26 15:45:35 by molamham         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
-#include <stdio.h>
 
 int	var_comp(t_list *var_node, char *var_name)
 {
 	int		i;
 	char	*var;
-	
+
 	i = 0;
 	var = (char *) var_node->content;
 	while (var[i] == var_name[i] && var_name[i] && var[i] != '=')

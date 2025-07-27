@@ -1,11 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   envp_to_list.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/26 13:04:43 by molamham          #+#    #+#             */
+/*   Updated: 2025/07/26 13:06:02 by molamham         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-
-void update_env(t_list **envp, char *key, char *value)
+void	update_env(t_list **envp, char *key, char *value)
 {
-	char *new_str;
-	char *tmp_str;
-	t_list *tmp;
+	char	*new_str;
+	char	*tmp_str;
+	t_list	*tmp;
 
 	tmp = *envp;
 	tmp_str = ft_strjoin(key, "=");
@@ -13,11 +24,12 @@ void update_env(t_list **envp, char *key, char *value)
 	free(tmp_str);
 	while (tmp)
 	{
-		if (!ft_strncmp((char *)tmp->content, key, ft_strlen(key)) && ((char *)tmp->content)[ft_strlen(key)] == '=')
+		if (!ft_strncmp((char *)tmp->content, key, ft_strlen(key))
+			&& ((char *)tmp->content)[ft_strlen(key)] == '=')
 		{
 			free(tmp->content);
 			tmp->content = new_str;
-			return;
+			return ;
 		}
 		tmp = tmp->next;
 	}
@@ -25,12 +37,12 @@ void update_env(t_list **envp, char *key, char *value)
 	free(new_str);
 }
 
-t_list *envp_to_list(char **envp)
+t_list	*envp_to_list(char **envp)
 {
-	int i;
-	t_list *t_envp;
-	t_list *new;
-	char *dup;
+	int		i;
+	t_list	*t_envp;
+	t_list	*new;
+	char	*dup;
 
 	i = 0;
 	t_envp = NULL;

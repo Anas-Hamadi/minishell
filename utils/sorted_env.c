@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sorted_env.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/26 13:20:59 by molamham          #+#    #+#             */
+/*   Updated: 2025/07/26 13:22:56 by molamham         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 void	swap_value(char **s1, char **s2)
@@ -29,13 +41,12 @@ int	var_name_comp(char *s1, char *s2)
 
 char	**sorted_env(t_list *env)
 {
-	int	i;
+	int		i;
 	char	**arr;
 	t_list	*tmp;
 
 	tmp = env;
-	i = ft_lstsize(env);
-	arr = malloc(sizeof(char *) * (i + 1));
+	arr = malloc(sizeof(char *) * (ft_lstsize(env) + 1));
 	i = 0;
 	while (tmp)
 	{
@@ -56,4 +67,3 @@ char	**sorted_env(t_list *env)
 	}
 	return (arr);
 }
-

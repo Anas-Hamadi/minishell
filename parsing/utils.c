@@ -8,7 +8,7 @@ void	skip_spaces(char **cmd)
 
 int is_metachar(char c)
 {
-    return (c== ' ' || c == '\t' || c == '|' || c == '<' || c == '>' || c == '\0');
+	return (c== ' ' || c == '\t' || c == '|' || c == '<' || c == '>' || c == '\0');
 }
 
 int	is_space(char c)
@@ -137,11 +137,11 @@ char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 		}
 	}
 	buffer[i] = '\0';
-	
+
 	// If we found quotes, signal that expansion should be disabled
 	if (expand_in_hd && found_quotes)
 		*expand_in_hd = false;
-	
+
 	return (strdup(buffer));
 }
 

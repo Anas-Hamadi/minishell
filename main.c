@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/20 09:52:54 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/27 10:33:56 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void init_shell(t_shell *shell, char **envp)
+void	init_shell(t_shell *shell, char **envp)
 {
 	shell->envp_list = envp_to_list(envp);
 	shell->envp = shell->envp_list;
@@ -27,21 +27,26 @@ void init_shell(t_shell *shell, char **envp)
 	shell->exit_code = 0;
 }
 
-void sigint_handler(int signum)
+void	sigint_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
-		write(1, "\n", 1);		// Print a newline on Ctrl+C
-		rl_replace_line("", 0); // Clear the current line in readline
-		rl_on_new_line();		// Move to a new line
-		rl_redisplay();			// Redisplay the prompt
+		write(1, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
 	}
 }
 
-void start(t_shell *shell)
+void signal_handler(int signum)
 {
-	int saved_in;
-	int saved_out;
+	(void) signum;
+}
+
+void	start(t_shell *shell)
+{
+	int	saved_in;
+	int	saved_out;
 
 	saved_in = dup(0);
 	saved_out = dup(1);
@@ -53,7 +58,7 @@ void start(t_shell *shell)
 		dup2(saved_out, 1);
 		close(saved_in);
 		close(saved_out);
-		return;
+		return ;
 	}
 	if (shell->cmds->next)
 		handle_pipes(shell);
@@ -67,27 +72,28 @@ void start(t_shell *shell)
 	close(saved_out);
 }
 
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
-	t_shell shell;
+	t_shell	shell;
 
 	(void)ac;
 	(void)av;
-	signal(SIGINT, sigint_handler); // Handle Ctrl+C
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
 	init_shell(&shell, envp);
-	while (true) // infinite loop to read and execute commands
+	while (true)
 	{
 		shell.input = readline(YELLOW "minishell$ " RESET);
-		if (!shell.input) // ctrl+d end of file
-			break;
+		if (!shell.input)
+			break ;
 		if (*shell.input)
 			add_history(shell.input);
-		else // skip empty commands
+		else
 		{
 			free(shell.input);
-			continue;
+			continue ;
 		}
 		start(&shell);
 	}
-	free_shell(&shell); // Free all allocated memory
+	free_shell(&shell);
 }

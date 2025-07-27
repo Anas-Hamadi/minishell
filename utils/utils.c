@@ -1,10 +1,16 @@
-#include "../minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/26 13:21:03 by molamham          #+#    #+#             */
+/*   Updated: 2025/07/26 13:24:29 by molamham         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	ft_lstfree(t_list *lst)
-{
-	free(lst->content);
-	free(lst);
-}
+#include "../minishell.h"
 
 int	ft_strcmp(const char *s1, const char *s2)
 {

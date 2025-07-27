@@ -1,5 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/26 15:43:10 by molamham          #+#    #+#             */
+/*   Updated: 2025/07/26 15:44:16 by molamham         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../minishell.h"
-#include <stdio.h>
 
 static bool	check_flag(char **args, int *i)
 {
@@ -10,12 +21,12 @@ static bool	check_flag(char **args, int *i)
 	j = 0;
 	if (args[1][j++] != '-')
 		return (true);
-	while (args[1][j] == 'n') //we have a - so we go through the n's
+	while (args[1][j] == 'n')
 		j++;
-	if (args[1][j])    // we didnt reach the null terminator wich means -nnnnnnnnnp for example 
+	if (args[1][j])
 		return (true);
 	(*i)++;
-	return (false); //we reched the end wich means we have -nnnnnnnnn so we are not printing a new line .
+	return (false);
 }
 
 static bool	handle_new_line(char **args, int *i)
@@ -24,22 +35,22 @@ static bool	handle_new_line(char **args, int *i)
 	int		j;
 
 	print_new_line = check_flag(args, i);
-	if (print_new_line == false) //-n kayna (ma gha ndirouch new line) , check il kano more -n's
+	if (print_new_line == false)
 	{
 		while (args[*i])
 		{
 			j = 0;
-			if (args[*i][0] != '-') // ma l9inach -nnn
+			if (args[*i][0] != '-')
 				break ;
 			j++;
 			while (args[*i][j] == 'n')
 				j++;
-			if (args[*i][j]) // l9ina chi 7aja bla n -nnnx
+			if (args[*i][j])
 				break ;
 			(*i)++;
 		}
 	}
-	return (print_new_line); // wach gha ndiro new line awla
+	return (print_new_line);
 }
 
 void	ft_echo(char **args)
@@ -48,7 +59,7 @@ void	ft_echo(char **args)
 	bool	newline;
 
 	i = 1;
-	newline = handle_new_line(args, &i); // false means no new line we pass the index i so the nnnnn get skipped 
+	newline = handle_new_line(args, &i);
 	while (args[i])
 	{
 		ft_putstr_fd(args[i], 1);
@@ -59,4 +70,3 @@ void	ft_echo(char **args)
 	if (newline == true)
 		ft_putchar('\n', 1);
 }
-
