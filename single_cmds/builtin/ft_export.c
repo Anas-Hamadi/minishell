@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:44:55 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:44:57 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/27 21:00:15 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,17 @@ void	print_content(char *str)
 	equal_sign = ft_strchr(str, '=');
 	if (!equal_sign)
 	{
-		printf("declare -x %s\n", str);
+		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd(str, 1);
 		return ;
 	}
 	key = ft_substr(str, 0, equal_sign - str);
 	value = equal_sign + 1;
-	printf("declare -x %s=\"%s\"\n", key, value);
+	ft_putstr_fd("declare -x ", 1);
+	ft_putstr_fd(key, 1);
+	ft_putstr_fd("=\"", 1);
+	ft_putstr_fd(value, 1);
+	ft_putstr_fd("\"\n", 1);
 	free(key);
 }
 
@@ -94,4 +99,5 @@ void	ft_export(t_list **t_envp, char **input)
 			y++;
 		}
 	}
+	ft_free(arr);
 }
