@@ -26,7 +26,7 @@ int	detect_invalid_metachar(char c)
 char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
 {
 	char	quote;
-	char	buffer[MAX_WORD_SIZE];
+	char	buffer[MAX_WORD_SIZE]; // todo: char	*buffer; to be malloc'ed
 	int		i = 0;
 
 	quote = **cmd;
@@ -74,7 +74,7 @@ char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
 
 char	*handle_hd_line(char **cmd)
 {
-	char	buffer[(MAX_WORD_SIZE * 10)];
+	char	buffer[(MAX_WORD_SIZE * 10)]; // todo: malloc
 	int		i = 0;
 	char	*expanded;
 
@@ -102,7 +102,7 @@ char	*handle_hd_line(char **cmd)
 
 char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 {
-	char	buffer[MAX_WORD_SIZE];
+	char	buffer[MAX_WORD_SIZE]; // todo: char	*buffer; to be malloc'ed
 	int		i = 0;
 	char	quote;
 	char	*quoted;
@@ -147,11 +147,11 @@ char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 
 int	get_last_exit_status(void)
 {
-	return (0);
+	return (0); // todo: work with the struct int exit_code var
 }
 char	*expand_variable(char **cmd)
 {
-	char	varname[256];
+	char	varname[256]; //? confirm if rly a var can't exceed 256 chars
 	int		i = 0;
 	char	*value;
 	// char	*mark;
@@ -169,7 +169,7 @@ char	*expand_variable(char **cmd)
 			return (NULL);
 
 		// WARNING: snprintf not allowed
-		snprintf(value, 12, "%d", get_last_exit_status());
+		snprintf(value, 12, "%d", get_last_exit_status()); // todo: no snprintf
 
 		// free(mark);
 		return (value);

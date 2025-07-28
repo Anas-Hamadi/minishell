@@ -5,19 +5,19 @@
 /* Create a new command node */
 t_cmdnode *create_cmdnode(void)
 {
-	t_cmdnode *cmd = malloc(sizeof(t_cmdnode));
-	if (!cmd)
-		return NULL;
-	cmd->argv = malloc(sizeof(char *));
-	if (!cmd->argv)
-	{
-		free(cmd);
-		return NULL;
-	}
-	cmd->argv[0] = NULL;
-	cmd->redirs = NULL;
-	cmd->next = NULL;
-	return cmd;
+    t_cmdnode *cmd = malloc(sizeof(t_cmdnode));
+    if (!cmd)
+        return (NULL);
+    cmd->argv = malloc(sizeof(char *));
+    if (!cmd->argv)
+    {
+        free(cmd);
+        return NULL;
+    }
+    cmd->argv[0] = NULL;
+    cmd->redirs = NULL;
+    cmd->next = NULL;
+    return (cmd);
 }
 
 /* Create a new redirection */
@@ -152,50 +152,49 @@ void free_cmd_list(t_cmdnode *cmd_list)
 //     t_redir *r = create_redir(type, filename);
 //     if (r)
 //         add_redir_to_cmd(node, r);
-// }  
+// }
 
 /* Parses one full line into a pipeline of cmdnodes */  
-t_cmdnode *parse_command_line(char *input)  
-{  
-	char       *cmd = input;
-	t_cmdnode  *head = create_cmdnode();
-	t_cmdnode  *cur  = head;  
-	bool        expand_hd = true;
+t_cmdnode *parse_command_line(char *input)
+{
+    char       *cmd = input;
+    t_cmdnode  *head = create_cmdnode();
+    t_cmdnode  *cur  = head;  
+    bool		expand_hd = true;
 
 	if (!head)
 		return NULL;
-
 	while (*cmd)
-	{  
-		skip_spaces(&cmd);  
-		if (!*cmd) break;  
+    {  
+        skip_spaces(&cmd);  
+        if (!*cmd) break;  
 
-		// Error on unsupported metacharacters
-		if (detect_invalid_metachar(*cmd))
-		{
-			fprintf(stderr, "Error: invalid char '%c' at pos %ld\n",
-					*cmd, cmd - input);
-			free_cmd_list(head);
-			return NULL;
-		}
+        // Error on unsupported metacharacters
+        if (detect_invalid_metachar(*cmd))
+        {
+            fprintf(stderr, "Error: invalid char '%c' at pos %ld\n",
+                    *cmd, cmd - input); // todo: no fprintf
+            free_cmd_list(head);
+            return NULL;
+        }
 
-		if (*cmd=='<' && cmd[1]=='<')  
-		{  
-			/* heredoc */  
-			cmd += 2;  
-			skip_spaces(&cmd);
-			if (!*cmd)
-			{
-				fprintf(stderr, "syntax error: expected heredoc delimiter\n");
-				free_cmd_list(head);
-				return NULL;
-			}
-
-			expand_hd = true;  
-			bool has_quotes = false;
-			char *delim = handle_word(&cmd, true, &expand_hd);
-			if (!delim) {
-				fprintf(stderr, "syntax error: bad heredoc delimiter\n");
+        if (*cmd=='<' && cmd[1]=='<')  
+        {  
+            /* heredoc */  
+            cmd += 2;  
+            skip_spaces(&cmd);
+            if (!*cmd)
+            {
+                fprintf(stderr, "syntax error: expected heredoc delimiter\n"); // todo: no fprintf
+                free_cmd_list(head);
+                return NULL;
+            }
+            
+            expand_hd = true;  
+            bool has_quotes = false;
+            char *delim = handle_word(&cmd, true, &expand_hd);
+            if (!delim) {
+				fprintf(stderr, "syntax error: bad heredoc delimiter\n"); // todo: no fprintf
 				free_cmd_list(head);
 				return NULL;
 			}
@@ -214,65 +213,65 @@ t_cmdnode *parse_command_line(char *input)
 			t_redir *r = create_redir(R_IN, tmp);
 			if (r)
 				add_redir_to_cmd(cur, r);  
-			free(delim);
-			free(tmp);
-		}  
-		else if (*cmd=='<'||*cmd=='>')  
-		{  
-			/* <, >>, > */  
-			t_redir_type t = (*cmd=='<')?R_IN:R_OUT;  
-			char op = *cmd++;  
-			if (*cmd==op) { t = R_APPEND; cmd++; }  
-			skip_spaces(&cmd);
-			if (!*cmd)
-			{
-				fprintf(stderr, "syntax error: expected filename after '%c'\n",
-						(t == R_APPEND ? '>' : op));
-				free_cmd_list(head);
-				return NULL;
-			}
-
-			char *fn = handle_word(&cmd, 0, 0);  
-			if (!fn) {
-				fprintf(stderr, "syntax error: bad filename\n");
-				free_cmd_list(head);
-				return NULL;
-			}
-			t_redir *r = create_redir(t, fn);
-			if (r)
-				add_redir_to_cmd(cur, r);
-			free(fn);
-		}  
-		else if (*cmd=='|')  
-		{  
-			/* new pipe segment */  
-			cmd++;  
-			cur->next = create_cmdnode();
-			if (!cur->next) {
-				free_cmd_list(head);
-				return NULL;
-			}
-			cur = cur->next;  
-		}  
-		else  
-		{  
-			/* a normal word */  
-			char *w = handle_word(&cmd, 0, 0);  
-			if (!w) {
-				fprintf(stderr, "Parse error at pos %ld\n", cmd - input);
-				free_cmd_list(head);
-				return NULL;
-			}
-
-			// Trim trailing spaces
-			char *end = w + strlen(w) - 1;
-			while (end >= w && (*end == ' ' || *end == '\t'))
-				*end-- = '\0';
-
-			add_arg_to_cmd(cur, w);
-			free(w);
-		}  
-	}  
+            free(delim);
+            free(tmp);
+        }  
+        else if (*cmd=='<'||*cmd=='>')  
+        {  
+            /* <, >>, > */  
+            t_redir_type t = (*cmd=='<')?R_IN:R_OUT;  
+            char op = *cmd++;  
+            if (*cmd==op) { t = R_APPEND; cmd++; }  
+            skip_spaces(&cmd);
+            if (!*cmd)
+            {
+                fprintf(stderr, "syntax error: expected filename after '%c'\n",
+                        (t == R_APPEND ? '>' : op)); // todo: no fprintf
+                free_cmd_list(head);
+                return (NULL);
+            }
+            
+            char *fn = handle_word(&cmd, 0, 0);  
+            if (!fn) {
+                fprintf(stderr, "syntax error: bad filename\n"); // todo: no fprintf
+                free_cmd_list(head);
+                return NULL;
+            }
+            t_redir *r = create_redir(t, fn);
+            if (r)
+                add_redir_to_cmd(cur, r);
+            free(fn);
+        }  
+        else if (*cmd=='|')  
+        {  
+            /* new pipe segment */  
+            cmd++;  
+            cur->next = create_cmdnode();
+            if (!cur->next) {
+                free_cmd_list(head);
+                return NULL;
+            }
+            cur = cur->next;  
+        }  
+        else  
+        {  
+            /* a normal word */  
+            char *w = handle_word(&cmd, 0, 0);  
+            if (!w) {
+                fprintf(stderr, "Parse error at pos %ld\n", cmd - input); // todo: no fprintf
+                free_cmd_list(head);
+                return NULL;
+            }
+            
+            // Trim trailing spaces
+            char *end = w + strlen(w) - 1;
+            while (end >= w && (*end == ' ' || *end == '\t'))
+                *end-- = '\0';
+                
+            add_arg_to_cmd(cur, w);
+            free(w);
+        }  
+    }  
 
 	return (head);  
 }

@@ -1,12 +1,12 @@
 #include "parse.h"
 
-static int  g_hdoc_count = 0;
+static int  g_hdoc_count = 0; // todo: no glbl var
 
 static char *heredoc_generate_filename(void)
 {
     char *fn = malloc(64);
     if (!fn) return NULL;
-    snprintf(fn, 64, "/tmp/.heredoc_%d_%d", (int)getpid(), g_hdoc_count++);
+    snprintf(fn, 64, "/tmp/.heredoc_%d_%d", (int)getpid(), g_hdoc_count++); // todo: no snprintf
     return fn;
 }
 

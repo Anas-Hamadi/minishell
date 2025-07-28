@@ -2,7 +2,6 @@
 #define PARSE_H
 #define MAX_WORD_SIZE 1024
 
-
 # include <errno.h>
 # include <stdlib.h>
 # include <limits.h>
