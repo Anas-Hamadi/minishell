@@ -209,8 +209,14 @@ t_cmdnode *parse_command_line(char *input)
 			char *tmp;
 			if (handle_heredoc(delim, expand_hd && !has_quotes, &tmp) < 0)
 			{
-				perror("heredoc");
 				free(delim);
+				// Check if heredoc was interrupted by signal
+				if (g_signal_num == SIGINT)
+				{
+					free_cmd_list(head);
+					return NULL;  // Return NULL to indicate interruption
+				}
+				perror("heredoc");
 				free_cmd_list(head);
 				return NULL;
 			}

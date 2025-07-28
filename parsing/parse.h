@@ -17,6 +17,8 @@
 # include <sys/types.h>
 # include <ctype.h>
 
+extern int	g_signal_num;
+
 typedef struct s_list
 {
 	void			*content;
@@ -60,6 +62,12 @@ int		handle_heredoc(const char *delimiter, int expand, char **out_filename);
 char	*safe_strcat_realloc(char **dest, size_t *dest_size, size_t *dest_len, const char *src);
 char	*safe_charcat_realloc(char **dest, size_t *dest_size, size_t *dest_len, char c);
 char	*ft_itoa_simple(int n);
+
+/* Signal handling functions */
+void	setup_signals_interactive(void);
+void	setup_signals_heredoc(void);
+void	setup_signals_child(void);
+void	check_signal_interactive(void);
 
 /* Structure management functions */
 t_cmdnode	*create_cmdnode(void);

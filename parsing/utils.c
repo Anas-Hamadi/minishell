@@ -1,53 +1,67 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/28 17:05:31 by ahamadi           #+#    #+#             */
+/*   Updated: 2025/07/28 17:49:08 by ahamadi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parse.h"
 
-void skip_spaces(char **cmd)
+void	skip_spaces(char **cmd)
 {
 	while (**cmd && (**cmd == ' ' || **cmd == '\t'))
 		(*cmd)++;
 }
 
-int is_metachar(char c)
+int	is_metachar(char c)
 {
-	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>' || c == '\0');
+	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>'
+		|| c == '\0');
 }
 
-int is_space(char c)
+int	is_space(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' ||
 			c == '\v' || c == '\f' || c == '\r');
 }
 
-int detect_invalid_metachar(char c)
+int	detect_invalid_metachar(char c)
 {
-	return (c == ';' || c == '&' ||
-			c == '(' || c == ')' || c == '*');
+	return ((c == ';' || c == '&' ||
+			c == '(' || c == ')' || c == '*'));
 }
 
-char *handle_quote_block(char **cmd, char *quote_context, bool in_del)
+char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
 {
-	char quote;
-	char *buffer;
-	size_t buffer_size;
-	size_t buffer_len = 0;
+	char	quote;
+	char	*buffer;
+	size_t	buffer_size;
+	size_t	buffer_len;
+	char	*expanded;
 
+	buffer_len = 0;
 	quote = **cmd;
 	if (quote != '\'' && quote != '"')
 		return (NULL);
 	*quote_context = quote;
 	(*cmd)++; // skip opening quote
-
 	buffer_size = 256; // initial size
 	buffer = malloc(buffer_size);
 	if (!buffer)
 		return (NULL);
 	buffer[0] = '\0';
-
 	if (quote == '\'')
 	{
 		// Single quotes: copy literally until next single quote
 		while (**cmd && **cmd != '\'')
 		{
-			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len,
+					**cmd))
 				return (NULL);
 			(*cmd)++;
 		}
@@ -65,13 +79,14 @@ char *handle_quote_block(char **cmd, char *quote_context, bool in_del)
 		{
 			if (**cmd == '$' && !in_del)
 			{
-				char *expanded = expand_variable(cmd);
+				expanded = expand_variable(cmd);
 				if (!expanded)
 				{
 					free(buffer);
 					return (NULL);
 				}
-				if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, expanded))
+				if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len,
+						expanded))
 				{
 					free(expanded);
 					return (NULL);
@@ -80,7 +95,8 @@ char *handle_quote_block(char **cmd, char *quote_context, bool in_del)
 			}
 			else
 			{
-				if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+				if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len,
+						**cmd))
 					return (NULL);
 				(*cmd)++;
 			}
@@ -95,19 +111,19 @@ char *handle_quote_block(char **cmd, char *quote_context, bool in_del)
 	}
 }
 
-char *handle_hd_line(char **cmd)
+char	*handle_hd_line(char **cmd)
 {
-	char *buffer;
-	size_t buffer_size;
-	size_t buffer_len = 0;
-	char *expanded;
+	char	*buffer;
+	size_t	buffer_size;
+	size_t	buffer_len;
+	char	*expanded;
 
+	buffer_len = 0;
 	buffer_size = 256; // initial size
 	buffer = malloc(buffer_size);
 	if (!buffer)
 		return (NULL);
 	buffer[0] = '\0';
-
 	while (**cmd)
 	{
 		if (**cmd == '$')
@@ -118,7 +134,8 @@ char *handle_hd_line(char **cmd)
 				free(buffer);
 				return (NULL);
 			}
-			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, expanded))
+			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len,
+					expanded))
 			{
 				free(expanded);
 				return (NULL);
@@ -127,7 +144,8 @@ char *handle_hd_line(char **cmd)
 		}
 		else
 		{
-			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len,
+					**cmd))
 				return (NULL);
 			(*cmd)++;
 		}
@@ -135,22 +153,23 @@ char *handle_hd_line(char **cmd)
 	return (buffer);
 }
 
-char *handle_word(char **cmd, bool in_del, bool *expand_in_hd)
+char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 {
-	char *buffer;
-	size_t buffer_size;
-	size_t buffer_len = 0;
-	char quote;
-	char *quoted;
-	char *expanded;
-	bool found_quotes = false;
+	char	*buffer;
+	size_t	buffer_size;
+	size_t	buffer_len;
+	char	quote;
+	char	*quoted;
+	char	*expanded;
+	bool	found_quotes;
 
+	buffer_len = 0;
+	found_quotes = false;
 	buffer_size = 256; // initial size
 	buffer = malloc(buffer_size);
 	if (!buffer)
 		return (NULL);
 	buffer[0] = '\0';
-
 	while (**cmd && !is_metachar(**cmd))
 	{
 		if (**cmd == '\'' || **cmd == '"')
@@ -161,7 +180,8 @@ char *handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 				free(buffer);
 				return (NULL); // unclosed quote
 			}
-			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, quoted))
+			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len,
+					quoted))
 			{
 				free(quoted);
 				return (NULL);
@@ -177,7 +197,8 @@ char *handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 				free(buffer);
 				return (NULL);
 			}
-			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, expanded))
+			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len,
+					expanded))
 			{
 				free(expanded);
 				return (NULL);
@@ -186,58 +207,53 @@ char *handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 		}
 		else
 		{
-			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len,
+					**cmd))
 				return (NULL);
 			(*cmd)++;
 		}
 	}
-
 	// If we found quotes, signal that expansion should be disabled
 	if (expand_in_hd && found_quotes)
 		*expand_in_hd = false;
-
 	return (buffer);
 }
 
-int get_last_exit_status(void)
+int	get_last_exit_status(void)
 {
 	return (0); // todo: work with the struct int exit_code var
 }
-char *expand_variable(char **cmd)
+char	*expand_variable(char **cmd)
 {
-	char *varname;
-	size_t varname_size;
-	size_t varname_len = 0;
-	char *value;
-	// char	*mark;
+	char	*varname;
+	size_t	varname_size;
+	size_t	varname_len;
+	char	*value;
 
+	varname_len = 0;
+	// char	*mark;
 	// mark = *cmd;
 	if (**cmd != '$')
 		return (NULL);
 	(*cmd)++; // skip the $
-
 	if (**cmd == '?')
 	{
 		(*cmd)++;
 		value = ft_itoa_simple(get_last_exit_status());
 		if (!value)
 			return (NULL);
-
 		// free(mark);
 		return (value);
 	}
-
 	// valid variable name: starts with letter or _
 	if (!isalpha(**cmd) && **cmd != '_')
 		return (strdup("")); // invalid var
-
 	// allocate variable name buffer
 	varname_size = 64; // initial size for variable names
 	varname = malloc(varname_size);
 	if (!varname)
 		return (NULL);
 	varname[0] = '\0';
-
 	// collect variable name
 	while (**cmd && (isalnum(**cmd) || **cmd == '_') && !is_metachar(**cmd))
 	{
@@ -245,11 +261,9 @@ char *expand_variable(char **cmd)
 			return (NULL);
 		(*cmd)++;
 	}
-
 	value = getenv(varname);
 	free(varname);
 	if (!value)
 		return (strdup("")); // undefined → expand to empty
-
 	return (strdup(value));
 }

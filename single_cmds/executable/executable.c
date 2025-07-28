@@ -44,6 +44,9 @@ void	execute_cmd(char *cmd_path, char **s_input,
 		return (perror("fork"));
 	if (pid == 0)
 	{
+		// Setup default signal handling for child process
+		setup_signals_child();
+		
 		env_array = list_to_array(t_envp);
 		if (access(cmd_path, X_OK) == 0)
 		{

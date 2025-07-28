@@ -23,6 +23,8 @@
 # include <signal.h>
 # include "parsing/parse.h"
 
+extern int	g_signal_num;
+
 typedef struct s_shell
 {
 	t_list		*envp_list;
@@ -31,6 +33,11 @@ typedef struct s_shell
 	char		*input;
 	int			exit_code;
 }	t_shell;
+
+/* Temp file management */
+void	add_temp_file(const char *filename);
+void	cleanup_temp_files(void);
+void	remove_temp_file(const char *filename);
 
 // /*==========================New struct===============================*/
 //

@@ -38,11 +38,6 @@ void sigint_handler(int signum)
 	}
 }
 
-void signal_handler(int signum)
-{
-	(void)signum;
-}
-
 void start(t_shell *shell)
 {
 	int saved_in;
@@ -78,14 +73,20 @@ int main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
+	
+	// Setup interactive mode signals
+	setup_signals_interactive();
+	
 	init_shell(&shell, envp);
 	while (true)
 	{
+		// Check for signals before prompting
+		check_signal_interactive();
+		
 		shell.input = readline(YELLOW "minishell$ " RESET);
-		if (!shell.input)
+		if (!shell.input)  // Ctrl-D pressed
 			break;
+			
 		if (*shell.input)
 			add_history(shell.input);
 		else
@@ -93,8 +94,19 @@ int main(int ac, char **av, char **envp)
 			free(shell.input);
 			continue;
 		}
+		
+		// Reset signal state before processing command
+		g_signal_num = 0;
 		start(&shell);
+		
+		// Check for signals after command execution
+		if (g_signal_num == SIGINT)
+		{
+			g_signal_num = 0;  // Reset signal
+			// Continue to next iteration - already handled in check_signal_interactive
+		}
 	}
 	rl_clear_history();
+	cleanup_temp_files();  // Clean up all temp files before exit
 	free_shell(&shell);
 }

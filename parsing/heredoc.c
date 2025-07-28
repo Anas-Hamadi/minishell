@@ -1,4 +1,5 @@
 #include "parse.h"
+#include "../minishell.h"
 
 static char *heredoc_generate_filename(int *hdoc_count)
 {
@@ -47,42 +48,125 @@ static char *heredoc_generate_filename(int *hdoc_count)
 	return fn;
 }
 
-int handle_heredoc(const char *delimiter, int expand, char **out_filename)
+static int heredoc_child_process(const char *delimiter, int expand, const char *filename)
 {
-	static int hdoc_count = 0; // static instead of global
-	char *fname = heredoc_generate_filename(&hdoc_count);
 	char *line;
 	int fd;
 
-	if (!fname || !delimiter || !out_filename)
-		return -1;
+	// Setup signals for heredoc
+	setup_signals_heredoc();
 
-	fd = open(fname, O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0600);
 	if (fd < 0)
-	{
-		free(fname);
 		return -1;
-	}
 
 	while (1)
 	{
+		// Check for signal interruption
+		if (g_signal_num == SIGINT)
+		{
+			close(fd);
+			unlink(filename);  // Clean up temp file
+			exit(130);  // Exit with SIGINT status
+		}
+
 		line = readline("> ");
 		if (!line) /* user pressed Ctrl+D */
 			break;
+		
 		if (strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break;
 		}
+
 		if (expand)
 		{
-			line = handle_hd_line(&line);
+			char *line_copy = line;
+			char *expanded = handle_hd_line(&line_copy);
+			if (expanded)
+			{
+				free(line);
+				line = expanded;
+			}
+			else
+			{
+				free(line);
+				close(fd);
+				return -1;
+			}
 		}
+
 		write(fd, line, strlen(line));
 		write(fd, "\n", 1);
 		free(line);
 	}
+
 	close(fd);
-	*out_filename = fname;
-	return 0;
+	exit(0);  // Success
+}
+
+int handle_heredoc(const char *delimiter, int expand, char **out_filename)
+{
+	static int hdoc_count = 0;
+	char *fname = heredoc_generate_filename(&hdoc_count);
+	pid_t pid;
+	int status;
+
+	if (!fname || !delimiter || !out_filename)
+		return -1;
+
+	// Reset signal before fork
+	g_signal_num = 0;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		free(fname);
+		return -1;
+	}
+
+	if (pid == 0)
+	{
+		// Child process handles heredoc input
+		heredoc_child_process(delimiter, expand, fname);
+		// This should not be reached (child exits in heredoc_child_process)
+		exit(1);
+	}
+	else
+	{
+		// Parent process waits for child
+		waitpid(pid, &status, 0);
+
+		// Check if child was interrupted by signal
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		{
+			// Child was interrupted by Ctrl-C
+			free(fname);
+			g_signal_num = SIGINT;  // Signal that heredoc was interrupted
+			return -1;
+		}
+
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
+		{
+			// Child exited due to SIGINT
+			free(fname);
+			g_signal_num = SIGINT;
+			return -1;
+		}
+
+		if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		{
+			// Child failed for other reasons
+			free(fname);
+			unlink(fname);
+			return -1;
+		}
+
+		// Success - child completed heredoc normally
+		*out_filename = fname;
+		add_temp_file(fname);  // Register for cleanup
+		return 0;
+	}
 }
