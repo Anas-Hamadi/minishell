@@ -1,6 +1,5 @@
 #ifndef PARSE_H
 #define PARSE_H
-#define MAX_WORD_SIZE 1024
 
 # include <errno.h>
 # include <stdlib.h>
@@ -16,6 +15,7 @@
 # include <string.h>
 # include <sys/stat.h>
 # include <sys/types.h>
+# include <ctype.h>
 
 typedef struct s_list
 {
@@ -55,6 +55,11 @@ char	*handle_quote_block(char **cmd, char *quote_context, bool in_del);
 int		get_last_exit_status(void);
 int		is_metachar(char c);
 int		handle_heredoc(const char *delimiter, int expand, char **out_filename);
+
+/* Memory utility functions */
+char	*safe_strcat_realloc(char **dest, size_t *dest_size, size_t *dest_len, const char *src);
+char	*safe_charcat_realloc(char **dest, size_t *dest_size, size_t *dest_len, char c);
+char	*ft_itoa_simple(int n);
 
 /* Structure management functions */
 t_cmdnode	*create_cmdnode(void);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: anas <anas@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/27 21:22:17 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:10:27 by anas             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	init_shell(t_shell *shell, char **envp)
+void init_shell(t_shell *shell, char **envp)
 {
 	shell->envp_list = envp_to_list(envp);
 	shell->envp = shell->envp_list;
@@ -27,7 +27,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->exit_code = 0;
 }
 
-void	sigint_handler(int signum)
+void sigint_handler(int signum)
 {
 	if (signum == SIGINT)
 	{
@@ -38,15 +38,15 @@ void	sigint_handler(int signum)
 	}
 }
 
-void	signal_handler(int signum)
+void signal_handler(int signum)
 {
-	(void) signum;
+	(void)signum;
 }
 
-void	start(t_shell *shell)
+void start(t_shell *shell)
 {
-	int	saved_in;
-	int	saved_out;
+	int saved_in;
+	int saved_out;
 
 	saved_in = dup(0);
 	saved_out = dup(1);
@@ -58,7 +58,7 @@ void	start(t_shell *shell)
 		dup2(saved_out, 1);
 		close(saved_in);
 		close(saved_out);
-		return ;
+		return;
 	}
 	if (shell->cmds->next)
 		handle_pipes(shell);
@@ -72,9 +72,9 @@ void	start(t_shell *shell)
 	close(saved_out);
 }
 
-int	main(int ac, char **av, char **envp)
+int main(int ac, char **av, char **envp)
 {
-	t_shell	shell;
+	t_shell shell;
 
 	(void)ac;
 	(void)av;
@@ -85,15 +85,16 @@ int	main(int ac, char **av, char **envp)
 	{
 		shell.input = readline(YELLOW "minishell$ " RESET);
 		if (!shell.input)
-			break ;
+			break;
 		if (*shell.input)
 			add_history(shell.input);
 		else
 		{
 			free(shell.input);
-			continue ;
+			continue;
 		}
 		start(&shell);
 	}
+	rl_clear_history();
 	free_shell(&shell);
 }

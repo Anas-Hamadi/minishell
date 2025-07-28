@@ -1,6 +1,6 @@
 #include "parse.h"
 
-void	skip_spaces(char **cmd)
+void skip_spaces(char **cmd)
 {
 	while (**cmd && (**cmd == ' ' || **cmd == '\t'))
 		(*cmd)++;
@@ -8,26 +8,27 @@ void	skip_spaces(char **cmd)
 
 int is_metachar(char c)
 {
-	return (c== ' ' || c == '\t' || c == '|' || c == '<' || c == '>' || c == '\0');
+	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>' || c == '\0');
 }
 
-int	is_space(char c)
+int is_space(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' ||
 			c == '\v' || c == '\f' || c == '\r');
 }
 
-int	detect_invalid_metachar(char c)
+int detect_invalid_metachar(char c)
 {
 	return (c == ';' || c == '&' ||
 			c == '(' || c == ')' || c == '*');
 }
 
-char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
+char *handle_quote_block(char **cmd, char *quote_context, bool in_del)
 {
-	char	quote;
-	char	buffer[MAX_WORD_SIZE]; // todo: char	*buffer; to be malloc'ed
-	int		i = 0;
+	char quote;
+	char *buffer;
+	size_t buffer_size;
+	size_t buffer_len = 0;
 
 	quote = **cmd;
 	if (quote != '\'' && quote != '"')
@@ -35,16 +36,28 @@ char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
 	*quote_context = quote;
 	(*cmd)++; // skip opening quote
 
+	buffer_size = 256; // initial size
+	buffer = malloc(buffer_size);
+	if (!buffer)
+		return (NULL);
+	buffer[0] = '\0';
+
 	if (quote == '\'')
 	{
 		// Single quotes: copy literally until next single quote
 		while (**cmd && **cmd != '\'')
-			buffer[i++] = *(*cmd)++;
+		{
+			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+				return (NULL);
+			(*cmd)++;
+		}
 		if (**cmd != '\'')
+		{
+			free(buffer);
 			return (NULL); // unclosed quote
+		}
 		(*cmd)++; // skip closing quote
-		buffer[i] = '\0';
-		return (strdup(buffer));
+		return (buffer);
 	}
 	else // double quotes: expand variables
 	{
@@ -54,29 +67,46 @@ char	*handle_quote_block(char **cmd, char *quote_context, bool in_del)
 			{
 				char *expanded = expand_variable(cmd);
 				if (!expanded)
+				{
+					free(buffer);
 					return (NULL);
-				for (int j = 0; expanded[j]; j++)
-					buffer[i++] = expanded[j];
+				}
+				if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, expanded))
+				{
+					free(expanded);
+					return (NULL);
+				}
 				free(expanded);
 			}
 			else
 			{
-				buffer[i++] = *(*cmd)++;
+				if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+					return (NULL);
+				(*cmd)++;
 			}
 		}
 		if (**cmd != '"')
+		{
+			free(buffer);
 			return (NULL); // unclosed quote
+		}
 		(*cmd)++; // skip closing quote
-		buffer[i] = '\0';
-		return (strdup(buffer));
+		return (buffer);
 	}
 }
 
-char	*handle_hd_line(char **cmd)
+char *handle_hd_line(char **cmd)
 {
-	char	buffer[(MAX_WORD_SIZE * 10)]; // todo: malloc
-	int		i = 0;
-	char	*expanded;
+	char *buffer;
+	size_t buffer_size;
+	size_t buffer_len = 0;
+	char *expanded;
+
+	buffer_size = 256; // initial size
+	buffer = malloc(buffer_size);
+	if (!buffer)
+		return (NULL);
+	buffer[0] = '\0';
 
 	while (**cmd)
 	{
@@ -84,30 +114,42 @@ char	*handle_hd_line(char **cmd)
 		{
 			expanded = expand_variable(cmd);
 			if (!expanded)
+			{
+				free(buffer);
 				return (NULL);
-			for (int j = 0; expanded[j]; j++)
-				buffer[i++] = expanded[j];
+			}
+			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, expanded))
+			{
+				free(expanded);
+				return (NULL);
+			}
 			free(expanded);
 		}
 		else
 		{
-			buffer[i++] = **cmd;
+			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+				return (NULL);
 			(*cmd)++;
 		}
 	}
-	buffer[i] = '\0'; 
-	return (strdup(buffer));
+	return (buffer);
 }
 
-
-char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
+char *handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 {
-	char	buffer[MAX_WORD_SIZE]; // todo: char	*buffer; to be malloc'ed
-	int		i = 0;
-	char	quote;
-	char	*quoted;
-	char	*expanded;
-	bool	found_quotes = false;
+	char *buffer;
+	size_t buffer_size;
+	size_t buffer_len = 0;
+	char quote;
+	char *quoted;
+	char *expanded;
+	bool found_quotes = false;
+
+	buffer_size = 256; // initial size
+	buffer = malloc(buffer_size);
+	if (!buffer)
+		return (NULL);
+	buffer[0] = '\0';
 
 	while (**cmd && !is_metachar(**cmd))
 	{
@@ -115,9 +157,15 @@ char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 		{
 			quoted = handle_quote_block(cmd, &quote, in_del);
 			if (!quoted)
+			{
+				free(buffer);
 				return (NULL); // unclosed quote
-			for (int j = 0; quoted[j]; j++)
-				buffer[i++] = quoted[j];
+			}
+			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, quoted))
+			{
+				free(quoted);
+				return (NULL);
+			}
 			found_quotes = true;
 			free(quoted);
 		}
@@ -125,35 +173,42 @@ char	*handle_word(char **cmd, bool in_del, bool *expand_in_hd)
 		{
 			expanded = expand_variable(cmd);
 			if (!expanded)
+			{
+				free(buffer);
 				return (NULL);
-			for (int j = 0; expanded[j]; j++)
-				buffer[i++] = expanded[j];
+			}
+			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len, expanded))
+			{
+				free(expanded);
+				return (NULL);
+			}
 			free(expanded);
 		}
 		else
 		{
-			buffer[i++] = **cmd;
+			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len, **cmd))
+				return (NULL);
 			(*cmd)++;
 		}
 	}
-	buffer[i] = '\0';
 
 	// If we found quotes, signal that expansion should be disabled
 	if (expand_in_hd && found_quotes)
 		*expand_in_hd = false;
 
-	return (strdup(buffer));
+	return (buffer);
 }
 
-int	get_last_exit_status(void)
+int get_last_exit_status(void)
 {
 	return (0); // todo: work with the struct int exit_code var
 }
-char	*expand_variable(char **cmd)
+char *expand_variable(char **cmd)
 {
-	char	varname[256]; //? confirm if rly a var can't exceed 256 chars
-	int		i = 0;
-	char	*value;
+	char *varname;
+	size_t varname_size;
+	size_t varname_len = 0;
+	char *value;
 	// char	*mark;
 
 	// mark = *cmd;
@@ -164,12 +219,9 @@ char	*expand_variable(char **cmd)
 	if (**cmd == '?')
 	{
 		(*cmd)++;
-		value = malloc(12);
+		value = ft_itoa_simple(get_last_exit_status());
 		if (!value)
 			return (NULL);
-
-		// WARNING: snprintf not allowed
-		snprintf(value, 12, "%d", get_last_exit_status()); // todo: no snprintf
 
 		// free(mark);
 		return (value);
@@ -179,15 +231,25 @@ char	*expand_variable(char **cmd)
 	if (!isalpha(**cmd) && **cmd != '_')
 		return (strdup("")); // invalid var
 
+	// allocate variable name buffer
+	varname_size = 64; // initial size for variable names
+	varname = malloc(varname_size);
+	if (!varname)
+		return (NULL);
+	varname[0] = '\0';
+
 	// collect variable name
 	while (**cmd && (isalnum(**cmd) || **cmd == '_') && !is_metachar(**cmd))
-		varname[i++] = *(*cmd)++;
-	varname[i] = '\0';
+	{
+		if (!safe_charcat_realloc(&varname, &varname_size, &varname_len, **cmd))
+			return (NULL);
+		(*cmd)++;
+	}
 
 	value = getenv(varname);
+	free(varname);
 	if (!value)
 		return (strdup("")); // undefined → expand to empty
 
 	return (strdup(value));
 }
-
