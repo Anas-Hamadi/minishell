@@ -1,14 +1,57 @@
 {
 	"editor.parameterHints.enabled": true,
-	"C_Cpp.autocomplete": "Default",
+	"C_Cpp.autocomplete": "default",
 	"editor.formatOnSave": true,
 	"files.autoSave": "afterDelay",
-	"C_Cpp.intelliSenseEngine": "Default",
+	"C_Cpp.intelliSenseEngine": "default",
 	"files.associations": {
 		"unistd.h": "c",
 		"history.h": "c",
 		"parse.h": "c",
 		"minishell.h": "c",
-		"stddef.h": "c"
-	}
+		"stddef.h": "c",
+		"*.h": "c",
+		"*.c": "c"
+	},
+	"C_Cpp.default.cStandard": "c11",
+	"C_Cpp.default.compilerPath": "/usr/bin/gcc",
+	"C_Cpp.default.intelliSenseMode": "gcc-x64",
+	"C_Cpp.default.includePath": [
+		"${workspaceFolder}/**",
+		"${workspaceFolder}/parsing/**",
+		"${workspaceFolder}/utils/**",
+		"${workspaceFolder}/single_cmds/**",
+		"${workspaceFolder}/pipe/**",
+		"/usr/include/**"
+	],
+	"C_Cpp.default.defines": [
+		"_GNU_SOURCE"
+	],
+	"C_Cpp.default.compilerArgs": [
+		"-Wall",
+		"-Wextra",
+		"-Werror",
+		"-g"
+	],
+	"C_Cpp.errorSquiggles": "enabled",
+	"debug.allowBreakpointsEverywhere": true,
+	"debug.showBreakpointsInOverviewRuler": true,
+	"debug.openDebug": "openOnDebugBreak",
+	"terminal.integrated.shell.linux": "/bin/bash",
+	"git.ignoreLimitWarning": true,
+	"files.exclude": {
+		"**/*.o": true,
+		"**/minishell": false
+	},
+	"search.exclude": {
+		"**/*.o": true
+	},
+	"editor.rulers": [
+		80
+	],
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.tabSize": 4,
+	"C_Cpp.clang_format_style": "{ BasedOnStyle: Google, IndentWidth: 4, UseTab: ForIndentation, ColumnLimit: 80, AllowShortFunctionsOnASingleLine: None, AllowShortIfStatementsOnASingleLine: false }",
+	"C_Cpp.formatting": "clangFormat"
 }

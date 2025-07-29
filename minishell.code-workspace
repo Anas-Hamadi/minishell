@@ -1,0 +1,33 @@
+{
+	"folders": [
+		{
+			"name": "Minishell",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.h": "c",
+			"*.c": "c",
+			"Makefile": "makefile"
+		},
+		"search.exclude": {
+			"**/*.o": true,
+			"**/minishell": false
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-vscode.cpptools-extension-pack",
+			"ms-vscode.hexeditor",
+			"usernamehw.errorlens",
+			"aaron-bond.better-comments",
+			"eamodio.gitlens"
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": []
+	}
+}

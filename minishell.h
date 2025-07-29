@@ -6,38 +6,38 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/28 23:29:39 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/29 16:56:05 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
-#include <stddef.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <limits.h>
-#include <stdbool.h>
-#include <sys/wait.h>
-#include <signal.h>
 #include <asm-generic/signal-defs.h>
 #include <bits/sigaction.h>
+#include <limits.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
 #include "parsing/parse.h"
 
-extern int g_signal_num;
+extern volatile sig_atomic_t g_signal_num;
 
-typedef struct s_shell
-{
-	t_list *envp_list;
-	t_list *envp;
-	t_cmdnode *cmds;
-	char *input;
-	int exit_code;
-	char **temp_files;
-	int temp_count;
-	int temp_capacity;
+typedef struct s_shell {
+    t_list *envp_list;
+    t_list *envp;
+    t_cmdnode *cmds;
+    char *input;
+    int exit_code;
+    char **temp_files;
+    int temp_count;
+    int temp_capacity;
 } t_shell;
 
 /* Temp file management */
@@ -78,17 +78,17 @@ void remove_temp_file(t_shell *shell, const char *filename);
 #define CYAN "\033[36m"
 #define RESET "\033[0m"
 
-void ft_export(t_list **t_envp, char **input);
+void ft_export(t_shell *shell);
 void ft_cd(t_shell *shell);
 int check_builtin(t_shell *shell);
 int ft_strcmp(const char *s1, const char *s2);
 char **ft_split(char const *s, char c);
 void ft_free(char **arr);
-void ft_echo(char **s_input);
+void ft_echo(t_shell *shell);
 int ft_strlen(char *str);
-void ft_pwd(char **s_input);
+void ft_pwd(t_shell *shell);
 char *ft_strchr(const char *s, int c);
-void ft_env(t_list *t_envp);
+void ft_env(t_shell *shell);
 char *ft_strchr(const char *s, int c);
 int ft_atoi(const char *str);
 void ft_putchar(int c, int fd);
@@ -98,7 +98,7 @@ void *ft_memcpy(void *dest, const void *src, size_t n);
 char *ft_strjoin(char const *s1, char const *s2);
 char *ft_strrchr(const char *s, int c);
 char *ft_strdup(const char *s);
-void ft_unset(char **s_input, t_list *t_envp);
+void ft_unset(t_shell *shell);
 void ft_lstfree(t_list *lst);
 int ft_strncmp(const char *s1, const char *s2, size_t n);
 char *ft_substr(char const *s, unsigned int start, size_t len);
@@ -123,6 +123,12 @@ void handle_single_cmd(t_shell *shell);
 void update_env(t_list **envp, char *key, char *value);
 
 void free_shell(t_shell *shell);
+
+/* Signal handling functions */
+void setup_signals_interactive(void);
+void setup_signals_heredoc(void);
+void setup_signals_child(void);
+void check_signal_interactive(void);
 
 void handle_single_redir(char *filename, int flags, int std_fd);
 void handle_redirs(t_shell *shell);
