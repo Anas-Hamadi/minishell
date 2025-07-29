@@ -155,7 +155,7 @@ void free_cmd_list(t_cmdnode *cmd_list)
 // }
 
 /* Parses one full line into a pipeline of cmdnodes */
-t_cmdnode *parse_command_line(char *input)
+t_cmdnode *parse_command_line(struct s_shell *shell, char *input)
 {
 	char *cmd = input;
 	t_cmdnode *head = create_cmdnode();
@@ -207,14 +207,14 @@ t_cmdnode *parse_command_line(char *input)
 				has_quotes = true;
 
 			char *tmp;
-			if (handle_heredoc(delim, expand_hd && !has_quotes, &tmp) < 0)
+			if (handle_heredoc(shell, delim, expand_hd && !has_quotes, &tmp) < 0)
 			{
 				free(delim);
 				// Check if heredoc was interrupted by signal
 				if (g_signal_num == SIGINT)
 				{
 					free_cmd_list(head);
-					return NULL;  // Return NULL to indicate interruption
+					return NULL; // Return NULL to indicate interruption
 				}
 				perror("heredoc");
 				free_cmd_list(head);

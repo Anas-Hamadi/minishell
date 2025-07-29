@@ -7,6 +7,8 @@
 	"files.associations": {
 		"unistd.h": "c",
 		"history.h": "c",
-		"parse.h": "c"
+		"parse.h": "c",
+		"minishell.h": "c",
+		"stddef.h": "c"
 	}
 }

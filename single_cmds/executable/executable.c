@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   executable.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:27:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:39:08 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/28 20:53:37 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	ft_permission_denied(char **env_array, char *s_input)
+void ft_permission_denied(char **env_array, char *s_input)
 {
 	ft_putstr_fd(RED "minishell: " RESET, 2);
 	ft_putstr_fd(s_input, 2);
@@ -21,9 +21,9 @@ void	ft_permission_denied(char **env_array, char *s_input)
 	exit(127);
 }
 
-void	exit_status(int pid, t_shell *shell)
+void exit_status(int pid, t_shell *shell)
 {
-	int	status;
+	int status;
 
 	status = 0;
 	waitpid(pid, &status, 0);
@@ -33,11 +33,11 @@ void	exit_status(int pid, t_shell *shell)
 		shell->exit_code = WTERMSIG(status);
 }
 
-void	execute_cmd(char *cmd_path, char **s_input,
-	t_list *t_envp, t_shell *shell)
+void execute_cmd(char *cmd_path, char **s_input,
+				 t_list *t_envp, t_shell *shell)
 {
-	int		pid;
-	char	**env_array;
+	int pid;
+	char **env_array;
 
 	pid = fork();
 	if (pid < 0)
@@ -46,7 +46,7 @@ void	execute_cmd(char *cmd_path, char **s_input,
 	{
 		// Setup default signal handling for child process
 		setup_signals_child();
-		
+
 		env_array = list_to_array(t_envp);
 		if (access(cmd_path, X_OK) == 0)
 		{
@@ -62,24 +62,24 @@ void	execute_cmd(char *cmd_path, char **s_input,
 		exit_status(pid, shell);
 }
 
-void	check_exec(t_shell *shell)
+void check_exec(t_shell *shell)
 {
-	char	*full_path;
+	char *full_path;
 
 	if (!shell->cmds->argv)
-		return ;
+		return;
 	if (ft_strchr(shell->cmds->argv[0], '/'))
 	{
 		execute_cmd(shell->cmds->argv[0],
-			shell->cmds->argv, shell->envp, shell);
-		return ;
+					shell->cmds->argv, shell->envp, shell);
+		return;
 	}
 	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
 	if (!full_path)
 	{
 		ft_putstr_fd(RED "minishell: command not found: " RESET, 2);
 		ft_putendl_fd(shell->cmds->argv[0], 2);
-		return ;
+		return;
 	}
 	else
 	{

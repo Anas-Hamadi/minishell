@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anas <anas@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/28 16:10:27 by anas             ###   ########.fr       */
+/*   Updated: 2025/07/28 23:44:31 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "parsing/parse.h"
 #include <fcntl.h>
 #include <readline/history.h>
 #include <stdio.h>
@@ -25,8 +24,12 @@ void init_shell(t_shell *shell, char **envp)
 	shell->cmds = NULL;
 	shell->input = NULL;
 	shell->exit_code = 0;
+	shell->temp_files = NULL;
+	shell->temp_count = 0;
+	shell->temp_capacity = 0;
 }
 
+// ignore
 void sigint_handler(int signum)
 {
 	if (signum == SIGINT)
@@ -45,7 +48,7 @@ void start(t_shell *shell)
 
 	saved_in = dup(0);
 	saved_out = dup(1);
-	shell->cmds = parse_command_line(shell->input);
+	shell->cmds = parse_command_line(shell, shell->input);
 	if (shell->cmds == NULL)
 	{
 		ft_putstr_fd(RED "minishell: parse error\n" RESET, 2);
@@ -73,20 +76,20 @@ int main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	
+
 	// Setup interactive mode signals
 	setup_signals_interactive();
-	
+
 	init_shell(&shell, envp);
 	while (true)
 	{
 		// Check for signals before prompting
 		check_signal_interactive();
-		
+
 		shell.input = readline(YELLOW "minishell$ " RESET);
-		if (!shell.input)  // Ctrl-D pressed
+		if (!shell.input) // Ctrl-D pressed
 			break;
-			
+
 		if (*shell.input)
 			add_history(shell.input);
 		else
@@ -94,19 +97,19 @@ int main(int ac, char **av, char **envp)
 			free(shell.input);
 			continue;
 		}
-		
+
 		// Reset signal state before processing command
 		g_signal_num = 0;
 		start(&shell);
-		
+
 		// Check for signals after command execution
 		if (g_signal_num == SIGINT)
 		{
-			g_signal_num = 0;  // Reset signal
-			// Continue to next iteration - already handled in check_signal_interactive
+			g_signal_num = 0; // Reset signal
+							  // Continue to next iteration - already handled in check_signal_interactive
 		}
 	}
 	rl_clear_history();
-	cleanup_temp_files();  // Clean up all temp files before exit
+	cleanup_temp_files(&shell); // Clean up all temp files before exit
 	free_shell(&shell);
 }

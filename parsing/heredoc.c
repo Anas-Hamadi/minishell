@@ -1,7 +1,7 @@
 #include "parse.h"
 #include "../minishell.h"
 
-static char *heredoc_generate_filename(int *hdoc_count)
+static char *heredoc_generate_filename(struct s_shell *shell, int *hdoc_count)
 {
 	char *fn = malloc(64);
 	char *pid_str, *count_str;
@@ -45,6 +45,9 @@ static char *heredoc_generate_filename(int *hdoc_count)
 	}
 	free(count_str);
 
+	// Register temp file for cleanup
+	add_temp_file(shell, fn);
+
 	return fn;
 }
 
@@ -66,14 +69,14 @@ static int heredoc_child_process(const char *delimiter, int expand, const char *
 		if (g_signal_num == SIGINT)
 		{
 			close(fd);
-			unlink(filename);  // Clean up temp file
-			exit(130);  // Exit with SIGINT status
+			unlink(filename); // Clean up temp file
+			exit(130);		  // Exit with SIGINT status
 		}
 
 		line = readline("> ");
 		if (!line) /* user pressed Ctrl+D */
 			break;
-		
+
 		if (strcmp(line, delimiter) == 0)
 		{
 			free(line);
@@ -103,13 +106,13 @@ static int heredoc_child_process(const char *delimiter, int expand, const char *
 	}
 
 	close(fd);
-	exit(0);  // Success
+	exit(0); // Success
 }
 
-int handle_heredoc(const char *delimiter, int expand, char **out_filename)
+int handle_heredoc(struct s_shell *shell, const char *delimiter, int expand, char **out_filename)
 {
 	static int hdoc_count = 0;
-	char *fname = heredoc_generate_filename(&hdoc_count);
+	char *fname = heredoc_generate_filename(shell, &hdoc_count);
 	pid_t pid;
 	int status;
 
@@ -144,7 +147,7 @@ int handle_heredoc(const char *delimiter, int expand, char **out_filename)
 		{
 			// Child was interrupted by Ctrl-C
 			free(fname);
-			g_signal_num = SIGINT;  // Signal that heredoc was interrupted
+			g_signal_num = SIGINT; // Signal that heredoc was interrupted
 			return -1;
 		}
 
@@ -166,7 +169,7 @@ int handle_heredoc(const char *delimiter, int expand, char **out_filename)
 
 		// Success - child completed heredoc normally
 		*out_filename = fname;
-		add_temp_file(fname);  // Register for cleanup
+		// Note: temp file already registered in heredoc_generate_filename
 		return 0;
 	}
 }
