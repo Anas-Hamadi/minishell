@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:43:10 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:44:16 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:54:43 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,13 @@ static bool	handle_new_line(char **args, int *i)
 	return (print_new_line);
 }
 
-void	ft_echo(char **args)
+void	ft_echo(t_shell *shell)
 {
 	int		i;
 	bool	newline;
+	char	**args;
 
+	args = shell->cmds->argv;
 	i = 1;
 	newline = handle_new_line(args, &i);
 	while (args[i])
@@ -69,4 +71,5 @@ void	ft_echo(char **args)
 	}
 	if (newline == true)
 		ft_putchar('\n', 1);
+	shell->exit_code = 0;
 }

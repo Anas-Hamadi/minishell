@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:40:47 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:42:47 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 17:38:37 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	update_cd_env(t_list **envp, char *oldpwd)
 	}
 	update_env(envp, "OLDPWD", oldpwd);
 	update_env(envp, "PWD", newpwd);
+	free(oldpwd);
 	free(newpwd);
 }
 
@@ -53,19 +54,24 @@ void	ft_cd(t_shell *shell)
 
 	path = get_target_path(shell->cmds->argv);
 	if (!path)
+	{
+		shell->exit_code = 1;
 		return ;
+	}
 	oldpwd = getcwd(NULL, 0);
 	if (!oldpwd)
 	{
 		perror("getcwd");
+		shell->exit_code = 1;
 		return ;
 	}
 	if (chdir(path) != 0)
 	{
 		perror("cd");
 		free(oldpwd);
+		shell->exit_code = 1;
 		return ;
 	}
 	update_cd_env(&shell->envp, oldpwd);
-	free(oldpwd);
+	shell->exit_code = 0;
 }

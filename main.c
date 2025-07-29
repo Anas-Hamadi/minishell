@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/27 21:22:17 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:55:06 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	start(t_shell *shell)
 	if (shell->cmds == NULL)
 	{
 		ft_putstr_fd(RED "minishell: parse error\n" RESET, 2);
+		shell->exit_code = 2;
 		dup2(saved_in, 0);
 		dup2(saved_out, 1);
 		close(saved_in);

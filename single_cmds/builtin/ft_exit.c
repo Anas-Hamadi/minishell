@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:44:30 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:44:42 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 16:54:53 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	ft_exit(t_shell *shell)
 	if (argv[1] && argv[2])
 	{
 		ft_putendl_fd("minishell: exit: too many arguments", 2);
+		shell->exit_code = 1;
 		return ;
 	}
 	if (argv[1])

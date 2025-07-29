@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 13:03:56 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 17:24:50 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,17 +65,17 @@ typedef struct s_shell
 # define CYAN "\033[36m"
 # define RESET "\033[0m"
 
-void	ft_export(t_list **t_envp, char **input);
+void	ft_export(t_shell *shell);
 void	ft_cd(t_shell *shell);
 int		check_builtin(t_shell *shell);
 int		ft_strcmp(const char *s1, const char *s2);
 char	**ft_split(char const *s, char c);
 void	ft_free(char **arr);
-void	ft_echo(char **s_input);
+void	ft_echo(t_shell *shell);
 int		ft_strlen(char *str);
-void	ft_pwd(char **s_input);
+void	ft_pwd(t_shell *shell);
 char	*ft_strchr(const char *s, int c);
-void	ft_env(t_list *t_envp);
+void	ft_env(t_shell *shell);
 char	*ft_strchr(const char *s, int c);
 int		ft_atoi(const char *str);
 void	ft_putchar(int c, int fd);
@@ -85,7 +85,7 @@ void	*ft_memcpy(void *dest, const void *src, size_t n);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strrchr(const char *s, int c);
 char	*ft_strdup(const char *s);
-void	ft_unset(char **s_input, t_list *t_envp);
+void	ft_unset(t_shell *shell);
 void	ft_lstfree(t_list *lst);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);

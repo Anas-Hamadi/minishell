@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:45:24 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/27 21:18:43 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 17:47:25 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,29 +88,31 @@ int	check_var(t_list	*t_envp, char *var_name)
 	return (1);
 }
 
-void	ft_unset(char **s_input, t_list *t_envp)
+void	ft_unset(t_shell *shell)
 {
 	int		i;
 	char	**var_name;
+	char	**s_input;
 
-	i = 0;
+	s_input = shell->cmds->argv;
+	i = -1;
 	var_name = set_var_name(s_input);
 	if (!s_input[1])
 	{
-		ft_putstr_fd("minishell: unset: not enough arguments\n", 2);
 		free(var_name);
+		shell->exit_code = 0;
 		return ;
 	}
 	else
 	{
-		while (var_name[i])
+		while (var_name[++i])
 		{
-			if (check_var(t_envp, var_name[i]) == 0)
-				delvar(&t_envp, var_name[i]);
+			if (check_var(shell->envp, var_name[i]) == 0)
+				delvar(&shell->envp, var_name[i]);
 			else
 				ft_putstr_fd("var not found\n", 2);
-			i++;
 		}
 	}
 	ft_free(var_name);
+	shell->exit_code = 0;
 }

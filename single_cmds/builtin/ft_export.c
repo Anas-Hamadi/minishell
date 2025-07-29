@@ -6,7 +6,7 @@
 /*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:44:55 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/27 21:14:11 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 17:39:38 by molamham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,30 +74,31 @@ void	print_content(char *str)
 	free(key);
 }
 
-void	ft_export(t_list **t_envp, char **input)
+void	ft_export(t_shell *shell)
 {
 	int		y;
 	int		i;
 	char	**arr;
+	char	**input;
 
+	input = shell->cmds->argv;
 	i = 0;
-	arr = sorted_env(*t_envp);
+	arr = sorted_env(shell->envp);
 	if (!input[1])
-	{
 		while (arr[i])
 			print_content(arr[i++]);
-	}
 	else
 	{
 		y = 1;
 		while (input[y])
 		{
-			if (ft_variable_exist(*t_envp, input[y]))
-				ft_add_ex_var(t_envp, input[y]);
+			if (ft_variable_exist(shell->envp, input[y]))
+				ft_add_ex_var(&shell->envp, input[y]);
 			else
-				ft_lstadd_back(t_envp, ft_lstnew(ft_strdup(input[y])));
+				ft_lstadd_back(&shell->envp, ft_lstnew(ft_strdup(input[y])));
 			y++;
 		}
 	}
 	ft_free(arr);
+	shell->exit_code = 0;
 }
