@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:44:30 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:44:42 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/29 21:47:28 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	ft_exit(t_shell *shell)
 	long long	exit_code;
 
 	argv = shell->cmds->argv;
-	exit_code = 0;
+	exit_code = shell->exit_code;
 	ft_putendl_fd("exit", 1);
 	if (argv[1] && !ft_isvalid_arg(argv[1]))
 		ft_exit_error(shell, argv[1]);

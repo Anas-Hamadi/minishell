@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-volatile sig_atomic_t g_signal_num = 0;
 
 void signal_handler_interactive(int sig)
 {
@@ -10,8 +9,8 @@ void signal_handler_interactive(int sig)
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
+		g_signal_num = 9999;
 	}
-	g_signal_num = sig;
 }
 
 void signal_handler_heredoc(int sig)
@@ -51,13 +50,14 @@ void setup_signals_interactive(void)
 
 void setup_signals_heredoc(void)
 {
-	struct sigaction sa;
+	// struct sigaction sa;
 
-	sa.sa_handler = signal_handler_heredoc;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0; // No restart for heredoc
+	// sa.sa_handler = signal_handler_heredoc;
+	// sigemptyset(&sa.sa_mask);
+	// sa.sa_flags = 0; // No restart for heredoc
 
-	sigaction(SIGINT, &sa, NULL); // Ctrl-C should interrupt
+	//sigaction(SIGINT, &sa, NULL); // Ctrl-C should interrupt
+	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_IGN);	  // Ignore Ctrl-\ in heredoc
 }
 
@@ -66,12 +66,14 @@ void setup_signals_child(void)
 	struct sigaction sa;
 
 	// Setup custom handler for child processes
-	sa.sa_handler = signal_handler_child;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-
-	sigaction(SIGINT, &sa, NULL);
+	sa.sa_handler = SIG_DFL;
 	sigaction(SIGQUIT, &sa, NULL);
+	sa.sa_handler = SIG_DFL;
+	sigaction(SIGINT, &sa, NULL);
+	// sa.sa_handler = signal_handler_child;
+	// sa.sa_flags = 0;
+
 }
 
 // void check_signal_interactive(void)

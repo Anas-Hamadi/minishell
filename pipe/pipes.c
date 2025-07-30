@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 16:44:31 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/29 16:56:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/29 22:20:37 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ void handle_pipes(t_shell *shell) {
     prev_fd = -1;
     tmp = shell->cmds;
     last_pid = -1;
+	
+	signal(SIGINT, SIG_IGN);
     while (shell->cmds) {
 	// Only create pipe if there's a next command
 	if (shell->cmds->next)
@@ -109,15 +111,22 @@ void handle_pipes(t_shell *shell) {
 	}
 	shell->cmds = shell->cmds->next;
     }
+	
 
     // Wait for all children and capture exit code of last command
     while ((waited_pid = wait(&status)) > 0) {
 	if (waited_pid == last_pid) {
 	    if (WIFEXITED(status))
 		shell->exit_code = WEXITSTATUS(status);
-	    else if (WIFSIGNALED(status))
-		shell->exit_code = 128 + WTERMSIG(status);
+	    else if (WIFSIGNALED(status)){
+			shell->exit_code = 128 + WTERMSIG(status);
+			if (shell->exit_code == 130)
+				write(STDOUT_FILENO, "\n", 1);
+			else if (shell->exit_code == 130)
+				write(STDOUT_FILENO, "^\\Quit (core dumped)\n", 20);
+		}
 	}
     }
+	setup_signals_interactive();
     free_cmd_list(tmp);
 }

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/29 16:56:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/29 21:48:44 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <unistd.h>
 
 #include "minishell.h"
+
+volatile sig_atomic_t g_signal_num = 0;
 
 void init_shell(t_shell *shell, char **envp) {
     shell->envp_list = envp_to_list(envp);
@@ -79,16 +81,20 @@ int main(int ac, char **av, char **envp) {
 	// check_signal_interactive();
 
 	shell.input = readline(YELLOW "minishell$ " RESET);
-	if (!shell.input)  // Ctrl-D pressed
-	    break;
+	
+	if (g_signal_num == 9999)
+		shell.exit_code = 130;
+		
+	// Ctrl-D pressed
+	if (!shell.input)
+		exit(shell.exit_code);
 
 	if (*shell.input)
-	    add_history(shell.input);
+		add_history(shell.input);
 	else {
 	    free(shell.input);
 	    continue;
 	}
-
 	// Reset signal state before processing command
 	g_signal_num = 0;
 	start(&shell);

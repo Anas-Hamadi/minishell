@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:05:31 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/07/29 16:56:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/30 13:11:40 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,8 @@ char *handle_hd_line(int exit_code, char **cmd) {
 		if (*cmd > varname_start) {
 		    char saved = **cmd;
 		    **cmd = '\0';
-		    char *env_value = getenv(varname_start);
+		    char *env_value = getenv(
+		        varname_start);  // Use getenv for heredoc for now
 		    **cmd = saved;
 		    expanded = env_value ? strdup(env_value) : strdup("");
 		} else {
@@ -205,6 +206,31 @@ char *handle_word(struct s_shell *shell, char **cmd, bool in_del,
     return (buffer);
 }
 
+char *get_env_value(struct s_shell *shell, const char *key) {
+    t_list *tmp;
+    char *content;
+    size_t key_len;
+
+    if (!key || !shell || !shell->envp)
+	return NULL;
+
+    key_len = strlen(key);
+    tmp = shell->envp;
+
+    while (tmp) {
+	content = (char *)tmp->content;
+	if (content && strncmp(content, key, key_len) == 0 &&
+	    content[key_len] == '=') {
+	    return strdup(content + key_len + 1);  // Return value after '='
+	}
+	tmp = tmp->next;
+    }
+
+    // Fallback to system environment if not found in shell env
+    char *system_value = getenv(key);
+    return system_value ? strdup(system_value) : NULL;
+}
+
 int get_last_exit_status(struct s_shell *shell) {
     return (shell->exit_code);
 }
@@ -243,9 +269,9 @@ char *expand_variable(struct s_shell *shell, char **cmd) {
 	    return (NULL);
 	(*cmd)++;
     }
-    value = getenv(varname);
+    value = get_env_value(shell, varname);
     free(varname);
     if (!value)
 	return (strdup(""));  // undefined → expand to empty
-    return (strdup(value));
+    return (value);           // get_env_value already returns strdup'd value
 }

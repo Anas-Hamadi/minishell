@@ -6,14 +6,14 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/29 16:56:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/29 18:06:15 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
 #include <asm-generic/signal-defs.h>
-#include <bits/sigaction.h>
+// #include <bits/sigaction.h>
 #include <limits.h>
 #include <readline/history.h>
 #include <readline/readline.h>

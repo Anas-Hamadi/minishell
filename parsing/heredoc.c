@@ -97,8 +97,8 @@ static int heredoc_child_process(const char *delimiter, int expand,
     exit(0);  // Success
 }
 
-int handle_heredoc(struct s_shell *shell, const char *delimiter, int expand,
-                   char **out_filename) {
+int handle_heredoc(struct s_shell *shell, const char *delimiter, int expand, char **out_filename)
+{
     static int hdoc_count = 0;
     char *fname = heredoc_generate_filename(shell, &hdoc_count);
     pid_t pid;
@@ -110,6 +110,7 @@ int handle_heredoc(struct s_shell *shell, const char *delimiter, int expand,
     // Reset signal before fork
     g_signal_num = 0;
 
+	signal(SIGINT, SIG_IGN);
     pid = fork();
     if (pid == -1) {
 	perror("fork");
@@ -125,6 +126,7 @@ int handle_heredoc(struct s_shell *shell, const char *delimiter, int expand,
     } else {
 	// Parent process waits for child
 	waitpid(pid, &status, 0);
+	setup_signals_interactive();
 
 	// Check if child was interrupted by signal
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) {
