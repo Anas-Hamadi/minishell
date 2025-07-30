@@ -57,22 +57,19 @@ static int	heredoc_child_process(const char *delimiter, int expand,
 	char	*expanded;
 
 	// Setup signals for heredoc
-	setup_signals_heredoc();
+	// setup_signals_heredoc();
+	signal(SIGINT,SIG_DFL);
 	fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0600);
 	if (fd < 0)
 		return (-1);
 	while (1)
 	{
-		// Check for signal interruption
-		if (g_signal_num == SIGINT)
-		{
-			close(fd);
-			unlink(filename); // Clean up temp file
-			exit(130);        // Exit with SIGINT status
-		}
 		line = readline("> ");
 		if (!line) /* user pressed Ctrl+D */
-			break ;
+		{
+            write (STDOUT_FILENO, "here-document delimited by end-of-file\n", 39);
+            break ;
+        }
 		if (strcmp(line, delimiter) == 0)
 		{
 			free(line);
@@ -142,24 +139,9 @@ int	handle_heredoc(t_shell *shell, const char *delimiter, int expand,
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			// Child was interrupted by Ctrl-C
+			write(STDOUT_FILENO, "\n", 1);
 			free(fname);
 			g_signal_num = SIGINT; // Signal that heredoc was interrupted
-			return (-1);
-		}
-
-		if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
-		{
-			// Child exited due to SIGINT
-			free(fname);
-			g_signal_num = SIGINT;
-			return (-1);
-		}
-
-		if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		{
-			// Child failed for other reasons
-			free(fname);
-			unlink(fname);
 			return (-1);
 		}
 

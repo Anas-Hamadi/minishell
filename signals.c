@@ -18,7 +18,7 @@ void	signal_handler_heredoc(int sig)
 	{
 		write(STDOUT_FILENO, "\n", 1);
 		g_signal_num = sig;
-		// Don't call readline functions in heredoc context
+		// Don't call readline functions in heredoc context ??
 	}
 }
 
@@ -48,12 +48,12 @@ void	setup_signals_interactive(void)
 
 void	setup_signals_heredoc(void)
 {
-	struct sigaction sa;
-	sa.sa_handler = signal_handler_heredoc;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0; // No restart for heredoc
-	sigaction(SIGINT, &sa, NULL); // Ctrl-C should interrupt
-	// signal(SIGINT, SIG_DFL);
+	// struct sigaction sa;
+	// sa.sa_handler = signal_handler_heredoc;
+	// sigemptyset(&sa.sa_mask);
+	// sa.sa_flags = 0; // No restart for heredoc
+	// sigaction(SIGINT, &sa, NULL); // Ctrl-C should interrupt
+	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_IGN); // Ignore Ctrl-\ in heredoc
 }
 
