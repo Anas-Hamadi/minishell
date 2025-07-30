@@ -37,10 +37,12 @@ void	handle_redirs(t_shell *shell)
 			handle_single_redir(redirs->filename, O_RDONLY, 0);
 		else if (redirs->type == R_OUT)
 			handle_single_redir(redirs->filename,
-				O_WRONLY | O_CREAT | O_TRUNC, 1);
+								O_WRONLY | O_CREAT | O_TRUNC,
+								1);
 		else if (redirs->type == R_APPEND)
 			handle_single_redir(redirs->filename,
-				O_WRONLY | O_CREAT | O_APPEND, 1);
+								O_WRONLY | O_CREAT | O_APPEND,
+								1);
 		redirs = redirs->next;
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executable_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:28:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 15:29:27 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:59:00 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ char	**list_to_array(t_list *t_envp)
 {
 	int		i;
 	char	**array;
+	
 	t_list	*tmp;
 
 	i = 0;

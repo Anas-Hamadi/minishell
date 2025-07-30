@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:05:31 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/07/30 13:11:40 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/30 18:01:37 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,13 @@ char *handle_quote_block(struct s_shell *shell, char **cmd, char *quote_context,
     }
 }
 
-char *handle_hd_line(int exit_code, char **cmd) {
+char *handle_hd_line(t_shell *shell, char **cmd) {
     char *buffer;
     size_t buffer_size;
     size_t buffer_len;
     char *expanded;
+    char *varname_start;
+    char saved;
 
     buffer_len = 0;
     buffer_size = 256;  // initial size
@@ -113,17 +115,17 @@ char *handle_hd_line(int exit_code, char **cmd) {
 	    (*cmd)++;  // skip the $
 	    if (**cmd == '?') {
 		(*cmd)++;
-		expanded = ft_itoa_simple(exit_code);
+		expanded = ft_itoa_simple(shell->exit_code);
 	    } else {
 		// Handle regular environment variables
-		char *varname_start = *cmd;
+		varname_start = *cmd;
 		while (**cmd && (isalnum(**cmd) || **cmd == '_')) (*cmd)++;
-
 		if (*cmd > varname_start) {
-		    char saved = **cmd;
+		    saved = **cmd;
 		    **cmd = '\0';
-		    char *env_value = getenv(
-		        varname_start);  // Use getenv for heredoc for now
+		    char *env_value = get_env_value(shell, varname_start);
+		    // char *env_value = getenv(varname_start);
+		    // 	varname_start); // Use getenv for heredoc for now
 		    **cmd = saved;
 		    expanded = env_value ? strdup(env_value) : strdup("");
 		} else {
@@ -212,23 +214,18 @@ char *get_env_value(struct s_shell *shell, const char *key) {
     size_t key_len;
 
     if (!key || !shell || !shell->envp)
-	return NULL;
-
+	return (NULL);
     key_len = strlen(key);
     tmp = shell->envp;
-
     while (tmp) {
 	content = (char *)tmp->content;
 	if (content && strncmp(content, key, key_len) == 0 &&
 	    content[key_len] == '=') {
-	    return strdup(content + key_len + 1);  // Return value after '='
+	    return (strdup(content + key_len + 1));  // Return value after '='
 	}
 	tmp = tmp->next;
     }
-
-    // Fallback to system environment if not found in shell env
-    char *system_value = getenv(key);
-    return system_value ? strdup(system_value) : NULL;
+    return (NULL);
 }
 
 int get_last_exit_status(struct s_shell *shell) {
