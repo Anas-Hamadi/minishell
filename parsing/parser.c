@@ -169,7 +169,7 @@ struct s_cmdnode	*parse_command_line(struct s_shell *shell, char *input)
 	char			*fn;
 	char			*w;
 	char			*end;
-			bool word_has_quotes_flag;
+	bool			word_has_quotes_flag;
 
 	cmd = input;
 	head = create_cmdnode();

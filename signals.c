@@ -70,4 +70,3 @@ void	setup_signals_child(void)
 	// sa.sa_handler = signal_handler_child;
 	// sa.sa_flags = 0;
 }
-

@@ -58,7 +58,7 @@ static int	heredoc_child_process(const char *delimiter, int expand,
 
 	// Setup signals for heredoc
 	// setup_signals_heredoc();
-	signal(SIGINT,SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 	fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0600);
 	if (fd < 0)
 		return (-1);
@@ -67,9 +67,10 @@ static int	heredoc_child_process(const char *delimiter, int expand,
 		line = readline("> ");
 		if (!line) /* user pressed Ctrl+D */
 		{
-            write (STDOUT_FILENO, "here-document delimited by end-of-file\n", 39);
-            break ;
-        }
+			write(STDOUT_FILENO, "here-document delimited by end-of-file\n",
+					39);
+			break ;
+		}
 		if (strcmp(line, delimiter) == 0)
 		{
 			free(line);
