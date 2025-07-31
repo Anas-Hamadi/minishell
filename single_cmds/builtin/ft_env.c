@@ -12,14 +12,16 @@
 
 #include "../../minishell.h"
 
-void ft_env(t_shell *shell) {
-    t_list *tmp;
+void	ft_env(t_shell *shell)
+{
+	t_list	*tmp;
 
-    tmp = shell->envp;
-    while (tmp) {
-	if (ft_strchr((char *)tmp->content, '='))
-	    ft_putendl_fd((char *)tmp->content, 1);
-	tmp = tmp->next;
-    }
-    shell->exit_code = 0;
+	tmp = shell->envp;
+	while (tmp)
+	{
+		if (ft_strchr((char *)tmp->content, '='))
+			ft_putendl_fd((char *)tmp->content, 1);
+		tmp = tmp->next;
+	}
+	shell->exit_code = 0;
 }

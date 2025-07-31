@@ -23,7 +23,7 @@ t_cmdnode	*create_cmdnode(void)
 }
 
 /* Create a new redirection */
-t_redir	*create_redir(t_redir_type type, char *filename)
+struct s_redir	*create_redir(t_redir_type type, char *filename)
 {
 	t_redir	*redir;
 
@@ -154,7 +154,7 @@ void	free_cmd_list(t_cmdnode *cmd_list)
 // }
 
 /* Parses one full line into a pipeline of cmdnodes */
-t_cmdnode	*parse_command_line(struct s_shell *shell, char *input)
+struct s_cmdnode	*parse_command_line(struct s_shell *shell, char *input)
 {
 	char			*cmd;
 	t_cmdnode		*head;
@@ -169,6 +169,7 @@ t_cmdnode	*parse_command_line(struct s_shell *shell, char *input)
 	char			*fn;
 	char			*w;
 	char			*end;
+			bool word_has_quotes_flag;
 
 	cmd = input;
 	head = create_cmdnode();
@@ -313,6 +314,7 @@ t_cmdnode	*parse_command_line(struct s_shell *shell, char *input)
 		else
 		{
 			/* a normal word */
+			word_has_quotes_flag = word_has_quotes(cmd);
 			w = handle_word(shell, &cmd, 0, 0);
 			if (!w)
 			{
@@ -320,10 +322,13 @@ t_cmdnode	*parse_command_line(struct s_shell *shell, char *input)
 				free_cmd_list(head);
 				return (NULL);
 			}
-			// Trim trailing spaces
-			end = w + strlen(w) - 1;
-			while (end >= w && (*end == ' ' || *end == '\t'))
-				*end-- = '\0';
+			// Only trim trailing spaces from unquoted words
+			if (!word_has_quotes_flag)
+			{
+				end = w + strlen(w) - 1;
+				while (end >= w && (*end == ' ' || *end == '\t'))
+					*end-- = '\0';
+			}
 			add_arg_to_cmd(cur, w);
 			free(w);
 		}

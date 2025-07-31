@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:44:30 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/29 21:47:28 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/31 15:19:56 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	ft_exit_error(t_shell *shell, char *arg)
 	ft_putstr_fd(arg, 2);
 	ft_putendl_fd(": numeric argument required", 2);
 	free_shell(shell);
-	exit(255);
+	exit(2);
 }
 
 void	ft_exit(t_shell *shell)
@@ -50,6 +50,7 @@ void	ft_exit(t_shell *shell)
 	if (argv[1] && argv[2])
 	{
 		ft_putendl_fd("minishell: exit: too many arguments", 2);
+		shell->exit_code = 1;
 		return ;
 	}
 	if (argv[1])

@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/31 15:29:12 by ahamadi           #+#    #+#             */
+/*   Updated: 2025/07/31 15:29:29 by ahamadi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSE_H
 # define PARSE_H
 
-# include <stddef.h>
 
 /* Forward declarations */
 struct s_shell;
 
+# include <stddef.h>
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -58,7 +70,9 @@ void							skip_spaces(char **cmd);
 int								detect_invalid_metachar(char c);
 char							*handle_word(struct s_shell *shell, char **cmd,
 									bool in_del, bool *expand_in_hd);
-char							*handle_hd_line(struct s_shell *shell, char **cmd);
+bool							word_has_quotes(char *input);
+char							*handle_hd_line(struct s_shell *shell,
+									char **cmd);
 char							*expand_variable(struct s_shell *shell,
 									char **cmd);
 int								get_last_exit_status(struct s_shell *shell);
@@ -86,7 +100,7 @@ void							setup_signals_child(void);
 
 /* Structure management functions */
 t_cmdnode						*create_cmdnode(void);
-t_redir							*create_redir(t_redir_type type,
+struct s_redir					*create_redir(t_redir_type type,
 									char *filename);
 void							add_redir_to_cmd(t_cmdnode *cmd,
 									t_redir *redir);
@@ -94,7 +108,7 @@ void							add_arg_to_cmd(t_cmdnode *cmd, char *arg);
 void							free_cmdnode(t_cmdnode *cmd);
 void							free_redir_list(t_redir *redirs);
 void							free_cmd_list(t_cmdnode *cmd_list);
-t_cmdnode						*parse_command_line(struct s_shell *shell,
+struct s_cmdnode				*parse_command_line(struct s_shell *shell,
 									char *input);
 char							*get_env_value(struct s_shell *shell,
 									const char *key);

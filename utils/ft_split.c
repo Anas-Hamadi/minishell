@@ -67,8 +67,8 @@ void	ft_free(char **arr)
 
 static char	**copy_alloc(const char *s, int words, char **arr, char c)
 {
-	int			i;
-	int			len;
+	int	i;
+	int	len;
 
 	i = 0;
 	while (i < words)
@@ -81,7 +81,7 @@ static char	**copy_alloc(const char *s, int words, char **arr, char c)
 			s++;
 			len++;
 		}
-		arr[i] = malloc (sizeof(char) * (len + 1));
+		arr[i] = malloc(sizeof(char) * (len + 1));
 		if (!arr[i])
 		{
 			ft_free(arr);
@@ -95,21 +95,21 @@ static char	**copy_alloc(const char *s, int words, char **arr, char c)
 
 char	**ft_split(char const *s, char c)
 {
-	char		**arr;
-	int			words;
+	char	**arr;
+	int		words;
 
 	if (!s)
 		return (NULL);
 	if (s[0] == '\0')
 	{
-		arr = malloc (sizeof(char *));
+		arr = malloc(sizeof(char *));
 		if (!arr)
 			return (NULL);
 		arr[0] = NULL;
 		return (arr);
 	}
 	words = count_words(s, c);
-	arr = malloc (sizeof(char *) * (words + 1));
+	arr = malloc(sizeof(char *) * (words + 1));
 	if (!arr)
 		return (NULL);
 	arr = copy_alloc(s, words, arr, c);
