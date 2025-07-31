@@ -3,30 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   handle_redirs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 12:46:55 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 12:48:24 by molamham         ###   ########.fr       */
+/*   Updated: 2025/07/31 17:24:07 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	handle_single_redir(char *filename, int flags, int std_fd)
+int	handle_single_redir(char *filename, int flags, int std_fd)
 {
 	int	fd;
 
 	fd = open(filename, flags, 0644);
 	if (fd < 0)
-		perror("open");
-	else
 	{
-		dup2(fd, std_fd);
-		close(fd);
+		perror(filename);
+		return (-1);
 	}
+	dup2(fd, std_fd);
+	close(fd);
+	return (0);
 }
 
-void	handle_redirs(t_shell *shell)
+int	handle_redirs(t_shell *shell)
 {
 	t_redir	*redirs;
 
@@ -34,15 +35,25 @@ void	handle_redirs(t_shell *shell)
 	while (redirs)
 	{
 		if (redirs->type == R_IN)
-			handle_single_redir(redirs->filename, O_RDONLY, 0);
+		{
+			if (handle_single_redir(redirs->filename, O_RDONLY, 0) < 0)
+				return (-1);
+		}
 		else if (redirs->type == R_OUT)
-			handle_single_redir(redirs->filename,
-								O_WRONLY | O_CREAT | O_TRUNC,
-								1);
+		{
+			if (handle_single_redir(redirs->filename,
+									O_WRONLY | O_CREAT | O_TRUNC,
+									1) < 0)
+				return (-1);
+		}
 		else if (redirs->type == R_APPEND)
-			handle_single_redir(redirs->filename,
-								O_WRONLY | O_CREAT | O_APPEND,
-								1);
+		{
+			if (handle_single_redir(redirs->filename,
+									O_WRONLY | O_CREAT | O_APPEND,
+									1) < 0)
+				return (-1);
+		}
 		redirs = redirs->next;
 	}
+	return (0);
 }

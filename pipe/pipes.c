@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 16:44:31 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/30 16:37:28 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/31 17:24:07 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,8 @@ static void	child_process(t_shell *shell, int pipefd[2], int prev_fd)
 		close(pipefd[1]);
 		close(pipefd[0]); // Close read end in child
 	}
-	handle_redirs(shell);
+	if (handle_redirs(shell) < 0)
+		exit(1); // Exit with error if redirection fails
 	if (check_builtin(shell))
 		exit(shell->exit_code); // Exit with builtin's exit code
 	else
@@ -143,12 +144,13 @@ void	handle_pipes(t_shell *shell)
 				else if (shell->exit_code == 130)
 					write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
 			}
-		} 
+		}
 		else
 		{
-		if (WIFSIGNALED(status)) {
-			tmp2 = WTERMSIG(status);
-				if (tmp2 == 2) 
+			if (WIFSIGNALED(status))
+			{
+				tmp2 = WTERMSIG(status);
+				if (tmp2 == 2)
 					write(STDOUT_FILENO, "\n", 1);
 				else if (tmp2 == 3)
 					write(STDOUT_FILENO, "Quit (core dumped)\n", 20);

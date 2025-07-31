@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:26:33 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/31 16:35:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/31 17:24:07 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,13 @@ void	remove_empty_args(char **argv)
 void	handle_single_cmd(t_shell *shell)
 {
 	if (shell->cmds->redirs)
-		handle_redirs(shell);
+	{
+		if (handle_redirs(shell) < 0)
+		{
+			shell->exit_code = 1;
+			return ;
+		}
+	}
 	if (shell->cmds->argv)
 		remove_empty_args(shell->cmds->argv);
 	if (!shell->cmds->argv || !shell->cmds->argv[0] ||
