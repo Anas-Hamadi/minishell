@@ -6,14 +6,14 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/30 15:59:38 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/31 16:35:05 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# include <asm-generic/signal-defs.h>
 # include "parsing/parse.h"
+# include <asm-generic/signal-defs.h>
 # include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -22,6 +22,7 @@
 # include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
 

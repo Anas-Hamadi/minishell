@@ -17,3 +17,6 @@ libft/obj/
 *.pdf
 notes
 *.md
+
+# Misc
+minishell_tester

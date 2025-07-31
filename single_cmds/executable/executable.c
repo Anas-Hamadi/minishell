@@ -6,19 +6,26 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:27:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/30 16:09:46 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/07/31 16:35:05 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	ft_permission_denied(char **env_array, char *s_input)
+void	ft_exec_error(char **env_array, char *s_input, int exit_code)
 {
 	ft_putstr_fd(RED "minishell: " RESET, 2);
 	ft_putstr_fd(s_input, 2);
-	ft_putendl_fd(": Permission denied or file not found" RESET, 2);
+	if (exit_code == 126)
+	{
+		ft_putendl_fd(": Permission denied" RESET, 2);
+	}
+	else
+	{
+		ft_putendl_fd(": Permission denied or file not found" RESET, 2);
+	}
 	ft_free(env_array);
-	exit(127);
+	exit(exit_code);
 }
 
 void	exit_status(int pid, t_shell *shell)
@@ -45,6 +52,7 @@ void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp,
 {
 	int		pid;
 	char	**env_array;
+		struct stat st;
 
 	// ignore the old signals (ctrl c / ctrl \ => ignored)
 	signal(SIGINT, SIG_IGN);
@@ -57,17 +65,36 @@ void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp,
 		// Setup default signal handling for child process
 		setup_signals_child();
 		env_array = list_to_array(t_envp);
-		if (access(cmd_path, X_OK) == 0)
+		// Check if file exists
+		if (access(cmd_path, F_OK) != 0)
+		{
+			// File doesn't exist
+			ft_exec_error(env_array, s_input[0], 127);
+		}
+		// Check if it's a directory first
+		if (stat(cmd_path, &st) == 0 && S_ISDIR(st.st_mode))
+		{
+			ft_putstr_fd(RED "minishell: " RESET, 2);
+			ft_putstr_fd(s_input[0], 2);
+			ft_putendl_fd(": Is a directory" RESET, 2);
+			ft_free(env_array);
+			exit(126);
+		}
+		// Check if it's executable
+		if (access(cmd_path, X_OK) != 0)
+		{
+			// File exists but not executable
+			ft_exec_error(env_array, s_input[0], 126);
+		}
+		else
 		{
 			execve(cmd_path, s_input, env_array);
 			perror("execve");
+			ft_free(env_array);
+			exit(127);
 		}
-		else
-			ft_permission_denied(env_array, s_input[0]);
-		ft_free(env_array);
-		exit(127);
 	}
-	//parent code
+	// parent code
 	else
 	{
 		exit_status(pid, shell);
