@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:27:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 22:44:41 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 23:17:17 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,11 @@ void	check_exec(t_shell *shell)
 
 	if (!shell->cmds->argv)
 		return ;
+	if (!shell->cmds->argv[0] || shell->cmds->argv[0][0] == '\0')
+	{
+		shell->exit_code = 0;
+		return ;
+	}
 	if (ft_strchr(shell->cmds->argv[0], '/'))
 	{
 		execute_cmd(shell->cmds->argv[0], shell->cmds->argv, shell->envp,
@@ -102,8 +107,6 @@ void	check_exec(t_shell *shell)
 		return ;
 	}
 	else
-	{
 		execute_cmd(full_path, shell->cmds->argv, shell->envp, shell);
-	}
 	free(full_path);
 }

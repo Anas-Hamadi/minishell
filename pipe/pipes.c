@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 21:53:51 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 22:07:54 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 23:06:30 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ static void	exec_cmd_child(t_shell *shell)
 	char	**env_array;
 
 	if (!shell->cmds->argv)
+		exit(0);
+	if (!shell->cmds->argv[0] || shell->cmds->argv[0][0] == '\0')
 		exit(0);
 	env_array = list_to_array(shell->envp);
 	if (ft_strchr(shell->cmds->argv[0], '/'))
