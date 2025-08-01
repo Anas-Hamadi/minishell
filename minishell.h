@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 15:07:21 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 16:21:18 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int								ft_strcmp(const char *s1, const char *s2);
 char							**ft_split(char const *s, char c);
 void							ft_free(char **arr);
 void							ft_echo(t_shell *shell);
-int								ft_strlen(char *str);
 void							ft_pwd(t_shell *shell);
 char							*ft_strchr(const char *s, int c);
 void							ft_env(t_shell *shell);

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 16:44:31 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/31 17:24:07 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 15:26:58 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static void	exec_cmd_child(t_shell *shell)
 	env_array = list_to_array(shell->envp);
 	if (ft_strchr(shell->cmds->argv[0], '/'))
 	{
-		// Direct path
 		if (access(shell->cmds->argv[0], X_OK) == 0)
 		{
 			execve(shell->cmds->argv[0], shell->cmds->argv, env_array);
@@ -66,7 +65,7 @@ static void	exec_cmd_child(t_shell *shell)
 
 static void	child_process(t_shell *shell, int pipefd[2], int prev_fd)
 {
-	setup_signals_child(); // Setup proper signal handling for child
+	setup_signals_child();
 	if (prev_fd != -1)
 	{
 		dup2(prev_fd, 0);
@@ -76,14 +75,14 @@ static void	child_process(t_shell *shell, int pipefd[2], int prev_fd)
 	{
 		dup2(pipefd[1], 1);
 		close(pipefd[1]);
-		close(pipefd[0]); // Close read end in child
+		close(pipefd[0]);
 	}
 	if (handle_redirs(shell) < 0)
-		exit(1); // Exit with error if redirection fails
+		exit(1);
 	if (check_builtin(shell))
-		exit(shell->exit_code); // Exit with builtin's exit code
+		exit(shell->exit_code);
 	else
-		exec_cmd_child(shell); // This will exec or exit, never returns
+		exec_cmd_child(shell);
 }
 
 static void	parent_process(t_shell *shell, int pipefd[2], int *prev_fd)
@@ -92,8 +91,8 @@ static void	parent_process(t_shell *shell, int pipefd[2], int *prev_fd)
 		close(*prev_fd);
 	if (shell->cmds->next)
 	{
-		close(pipefd[1]);     // Close write end in parent
-		*prev_fd = pipefd[0]; // Keep read end for next command
+		close(pipefd[1]);
+		*prev_fd = pipefd[0];
 	}
 }
 
@@ -114,7 +113,6 @@ void	handle_pipes(t_shell *shell)
 	signal(SIGINT, SIG_IGN);
 	while (shell->cmds)
 	{
-		// Only create pipe if there's a next command
 		if (shell->cmds->next)
 			pipe(pipefd);
 		pid = fork();
@@ -122,12 +120,11 @@ void	handle_pipes(t_shell *shell)
 			child_process(shell, pipefd, prev_fd);
 		else
 		{
-			last_pid = pid; // Keep track of the last command in pipeline
+			last_pid = pid;
 			parent_process(shell, pipefd, &prev_fd);
 		}
 		shell->cmds = shell->cmds->next;
 	}
-	// Wait for all children and capture exit code of last command
 	while ((waited_pid = wait(&status)) > 0)
 	{
 		if (waited_pid == last_pid)

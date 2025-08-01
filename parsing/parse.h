@@ -6,18 +6,14 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:29:12 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/07/31 15:29:29 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 17:31:05 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSE_H
 # define PARSE_H
 
-
-/* Forward declarations */
-struct s_shell;
-
-# include <stddef.h>
+# include "libft/libft.h"
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -26,6 +22,7 @@ struct s_shell;
 # include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
+# include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -36,33 +33,28 @@ struct s_shell;
 
 extern volatile sig_atomic_t	g_signal_num;
 
-typedef struct s_list
-{
-	void						*content;
-	struct s_list				*next;
-}								t_list;
+struct							s_shell;
 
-/* Type definitions */
 typedef enum e_redir_type
 {
-	R_IN,    // "< file"
-	R_OUT,   // "> file"
-	R_APPEND // ">> file"
+	R_IN,
+	R_OUT,
+	R_APPEND
 }								t_redir_type;
 
 typedef struct s_redir
 {
 	t_redir_type				type;
-	char *filename; // or temp-file from heredoc
+	char						*filename;
 	struct s_redir				*next;
 }								t_redir;
 
 /* one command (between pipes) */
 typedef struct s_cmdnode
 {
-	char **argv;            // NULL-terminated list of args
-	t_redir *redirs;        // list of <, >, >> (and heredoc temp files)
-	struct s_cmdnode *next; // next in pipe
+	char				**argv;
+	t_redir				*redirs;
+	struct s_cmdnode	*next;
 }								t_cmdnode;
 
 /* Function declarations */
@@ -112,4 +104,25 @@ struct s_cmdnode				*parse_command_line(struct s_shell *shell,
 									char *input);
 char							*get_env_value(struct s_shell *shell,
 									const char *key);
+
+/* Helper functions */
+void							copy_argv_array(char **new_argv,
+									char **old_argv, int count);
+int								validate_heredoc_delimiter(const char
+									*delimiter);
+int								handle_heredoc_parsing(struct s_shell *shell,
+									char **cmd_ptr, t_cmdnode *cmd);
+int								handle_redirection_parsing(
+									struct s_shell *shell,
+									char **cmd_ptr, t_cmdnode *cmd);
+int								handle_pipe_token(char **cmd_ptr,
+									t_cmdnode **cur);
+int								handle_word_token(struct s_shell *shell,
+									char **cmd_ptr, t_cmdnode *cur);
+int								handle_heredoc_token(struct s_shell *shell,
+									char **cmd_ptr, t_cmdnode *cur);
+int								handle_redirection_token(struct s_shell *shell,
+									char **cmd_ptr, t_cmdnode *cur);
+int								handle_token_types(struct s_shell *shell,
+									char **cmd, t_cmdnode **cur);
 #endif

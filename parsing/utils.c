@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 17:05:31 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/07/31 15:19:56 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 15:31:54 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,14 @@ char	*handle_quote_block(struct s_shell *shell, char **cmd,
 	if (quote != '\'' && quote != '"')
 		return (NULL);
 	*quote_context = quote;
-	(*cmd)++;          // skip opening quote
-	buffer_size = 256; // initial size
+	(*cmd)++;
+	buffer_size = 256;
 	buffer = malloc(buffer_size);
 	if (!buffer)
 		return (NULL);
 	buffer[0] = '\0';
 	if (quote == '\'')
 	{
-		// Single quotes: copy literally until next single quote
 		while (**cmd && **cmd != '\'')
 		{
 			if (!safe_charcat_realloc(&buffer, &buffer_size, &buffer_len,
@@ -69,12 +68,12 @@ char	*handle_quote_block(struct s_shell *shell, char **cmd,
 		if (**cmd != '\'')
 		{
 			free(buffer);
-			return (NULL); // unclosed quote
+			return (NULL);
 		}
-		(*cmd)++; // skip closing quote
+		(*cmd)++;
 		return (buffer);
 	}
-	else // double quotes: expand variables
+	else
 	{
 		while (**cmd && **cmd != '"')
 		{
@@ -105,9 +104,9 @@ char	*handle_quote_block(struct s_shell *shell, char **cmd,
 		if (**cmd != '"')
 		{
 			free(buffer);
-			return (NULL); // unclosed quote
+			return (NULL);
 		}
-		(*cmd)++; // skip closing quote
+		(*cmd)++;
 		return (buffer);
 	}
 }
@@ -123,7 +122,7 @@ char	*handle_hd_line(t_shell *shell, char **cmd)
 	char	*env_value;
 
 	buffer_len = 0;
-	buffer_size = 256; // initial size
+	buffer_size = 256;
 	buffer = malloc(buffer_size);
 	if (!buffer)
 		return (NULL);
@@ -132,8 +131,7 @@ char	*handle_hd_line(t_shell *shell, char **cmd)
 	{
 		if (**cmd == '$')
 		{
-			// Simple heredoc variable expansion
-			(*cmd)++; // skip the $
+			(*cmd)++;
 			if (**cmd == '?')
 			{
 				(*cmd)++;
@@ -141,7 +139,6 @@ char	*handle_hd_line(t_shell *shell, char **cmd)
 			}
 			else
 			{
-				// Handle regular environment variables
 				varname_start = *cmd;
 				while (**cmd && (isalnum(**cmd) || **cmd == '_'))
 					(*cmd)++;
@@ -150,8 +147,6 @@ char	*handle_hd_line(t_shell *shell, char **cmd)
 					saved = **cmd;
 					**cmd = '\0';
 					env_value = get_env_value(shell, varname_start);
-					// char *env_value = getenv(varname_start);
-					// 	varname_start); // Use getenv for heredoc for now
 					**cmd = saved;
 					expanded = env_value ? strdup(env_value) : strdup("");
 				}
@@ -197,7 +192,7 @@ char	*handle_word(struct s_shell *shell, char **cmd, bool in_del,
 
 	buffer_len = 0;
 	found_quotes = false;
-	buffer_size = 256; // initial size
+	buffer_size = 256;
 	buffer = malloc(buffer_size);
 	if (!buffer)
 		return (NULL);
@@ -210,7 +205,7 @@ char	*handle_word(struct s_shell *shell, char **cmd, bool in_del,
 			if (!quoted)
 			{
 				free(buffer);
-				return (NULL); // unclosed quote
+				return (NULL);
 			}
 			if (!safe_strcat_realloc(&buffer, &buffer_size, &buffer_len,
 					quoted))
@@ -245,7 +240,6 @@ char	*handle_word(struct s_shell *shell, char **cmd, bool in_del,
 			(*cmd)++;
 		}
 	}
-	// If we found quotes, signal that expansion should be disabled
 	if (expand_in_hd && found_quotes)
 		*expand_in_hd = false;
 	return (buffer);
@@ -281,7 +275,7 @@ char	*get_env_value(struct s_shell *shell, const char *key)
 		if (content && strncmp(content, key, key_len) == 0 &&
 			content[key_len] == '=')
 		{
-			return (strdup(content + key_len + 1)); // Return value after '='
+			return (strdup(content + key_len + 1));
 		}
 		tmp = tmp->next;
 	}
@@ -300,33 +294,26 @@ char	*expand_variable(struct s_shell *shell, char **cmd)
 	char	*value;
 
 	varname_len = 0;
-	// char	*mark;
-	// mark = *cmd;
 	if (**cmd != '$')
 		return (NULL);
-	(*cmd)++; // skip the $
+	(*cmd)++;
 	if (**cmd == '?')
 	{
 		(*cmd)++;
 		value = ft_itoa_simple(get_last_exit_status(shell));
 		if (!value)
 			return (NULL);
-		// free(mark);
 		return (value);
 	}
-	// If $ is not followed by valid variable name, return literal $ and consume
-	// the $
 	if (!isalpha(**cmd) && **cmd != '_')
 	{
-		return (strdup("$")); // return literal $ ($ already consumed)
+		return (strdup("$"));
 	}
-	// allocate variable name buffer
-	varname_size = 64; // initial size for variable names
+	varname_size = 64;
 	varname = malloc(varname_size);
 	if (!varname)
 		return (NULL);
 	varname[0] = '\0';
-	// collect variable name
 	while (**cmd && (isalnum(**cmd) || **cmd == '_') && !is_metachar(**cmd))
 	{
 		if (!safe_charcat_realloc(&varname, &varname_size, &varname_len, **cmd))
@@ -336,6 +323,6 @@ char	*expand_variable(struct s_shell *shell, char **cmd)
 	value = get_env_value(shell, varname);
 	free(varname);
 	if (!value)
-		return (strdup("")); // undefined → expand to empty
-	return (value);          // get_env_value already returns strdup'd value
+		return (strdup(""));
+	return (value);
 }

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 15:15:23 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 15:15:24 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 17:19:04 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ static char	*heredoc_generate_filename(struct s_shell *shell, int *hdoc_count)
 	if (!fn)
 		return (NULL);
 	fn[0] = '\0';
-	// Build: /tmp/.heredoc_<pid>_<count>
 	if (!safe_strcat_realloc(&fn, &fn_size, &fn_len, "/tmp/.heredoc_"))
 		return (NULL);
 	pid_str = ft_itoa_simple((int)getpid());
