@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:28:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/30 15:59:00 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 11:53:05 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ char	**list_to_array(t_list *t_envp)
 {
 	int		i;
 	char	**array;
-	
 	t_list	*tmp;
 
 	i = 0;
@@ -67,6 +66,9 @@ char	*find_cmd_path(char *cmd, t_list *t_envp)
 	char	*tmp;
 	char	*path_value;
 
+	// If command is empty, don't search PATH
+	if (!cmd || cmd[0] == '\0')
+		return (NULL);
 	path_value = get_path_value(t_envp);
 	if (!path_value)
 		return (NULL);

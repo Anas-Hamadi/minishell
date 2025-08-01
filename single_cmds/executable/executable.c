@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:27:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/31 16:35:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 11:53:26 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ void	exit_status(int pid, t_shell *shell)
 void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp,
 		t_shell *shell)
 {
-	int		pid;
-	char	**env_array;
-		struct stat st;
+	int			pid;
+	char		**env_array;
+	struct stat	st;
 
 	// ignore the old signals (ctrl c / ctrl \ => ignored)
 	signal(SIGINT, SIG_IGN);
@@ -117,8 +117,16 @@ void	check_exec(t_shell *shell)
 	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
 	if (!full_path)
 	{
-		ft_putstr_fd(RED "minishell: command not found: " RESET, 2);
-		ft_putendl_fd(shell->cmds->argv[0], 2);
+		ft_putstr_fd("minishell: ", 2);
+		if (shell->cmds->argv[0][0] == '\0')
+		{
+			ft_putendl_fd(": command not found", 2);
+		}
+		else
+		{
+			ft_putstr_fd(shell->cmds->argv[0], 2);
+			ft_putendl_fd(": command not found", 2);
+		}
 		shell->exit_code = 127;
 		return ;
 	}
