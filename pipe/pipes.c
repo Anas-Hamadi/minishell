@@ -5,12 +5,29 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/26 16:44:31 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 15:26:58 by ahamadi          ###   ########.fr       */
+/*   Created: 2025/08/01 21:53:51 by ahamadi           #+#    #+#             */
+/*   Updated: 2025/08/01 22:07:54 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+static void	exec_absolute_path(t_shell *shell, char **env_array)
+{
+	if (access(shell->cmds->argv[0], X_OK) == 0)
+	{
+		execve(shell->cmds->argv[0], shell->cmds->argv, env_array);
+		perror("execve");
+	}
+	else
+	{
+		ft_putstr_fd(RED "minishell: " RESET, 2);
+		ft_putstr_fd(shell->cmds->argv[0], 2);
+		ft_putendl_fd(": Permission denied or file not found" RESET, 2);
+	}
+	ft_free(env_array);
+	exit(127);
+}
 
 static void	exec_cmd_child(t_shell *shell)
 {
@@ -21,21 +38,7 @@ static void	exec_cmd_child(t_shell *shell)
 		exit(0);
 	env_array = list_to_array(shell->envp);
 	if (ft_strchr(shell->cmds->argv[0], '/'))
-	{
-		if (access(shell->cmds->argv[0], X_OK) == 0)
-		{
-			execve(shell->cmds->argv[0], shell->cmds->argv, env_array);
-			perror("execve");
-		}
-		else
-		{
-			ft_putstr_fd(RED "minishell: " RESET, 2);
-			ft_putstr_fd(shell->cmds->argv[0], 2);
-			ft_putendl_fd(": Permission denied or file not found" RESET, 2);
-		}
-		ft_free(env_array);
-		exit(127);
-	}
+		exec_absolute_path(shell, env_array);
 	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
 	if (!full_path)
 	{
@@ -45,19 +48,7 @@ static void	exec_cmd_child(t_shell *shell)
 		exit(127);
 	}
 	else
-	{
-		if (access(full_path, X_OK) == 0)
-		{
-			execve(full_path, shell->cmds->argv, env_array);
-			perror("execve");
-		}
-		else
-		{
-			ft_putstr_fd(RED "minishell: " RESET, 2);
-			ft_putstr_fd(shell->cmds->argv[0], 2);
-			ft_putendl_fd(": Permission denied or file not found" RESET, 2);
-		}
-	}
+		exec_with_path(shell, full_path, env_array);
 	ft_free(env_array);
 	free(full_path);
 	exit(127);
@@ -98,62 +89,27 @@ static void	parent_process(t_shell *shell, int pipefd[2], int *prev_fd)
 
 void	handle_pipes(t_shell *shell)
 {
-	int			pid;
-	int			pipefd[2];
-	int			prev_fd;
-	t_cmdnode	*tmp;
-	int			last_pid;
-	int			status;
-	int			waited_pid;
-	int			tmp2;
+	t_pipe_data	data;
 
-	prev_fd = -1;
-	tmp = shell->cmds;
-	last_pid = -1;
+	data.prev_fd = -1;
+	data.tmp = shell->cmds;
+	data.last_pid = -1;
 	signal(SIGINT, SIG_IGN);
 	while (shell->cmds)
 	{
 		if (shell->cmds->next)
-			pipe(pipefd);
-		pid = fork();
-		if (pid == 0)
-			child_process(shell, pipefd, prev_fd);
+			pipe(data.pipefd);
+		data.pid = fork();
+		if (data.pid == 0)
+			child_process(shell, data.pipefd, data.prev_fd);
 		else
 		{
-			last_pid = pid;
-			parent_process(shell, pipefd, &prev_fd);
+			data.last_pid = data.pid;
+			parent_process(shell, data.pipefd, &data.prev_fd);
 		}
 		shell->cmds = shell->cmds->next;
 	}
-	while ((waited_pid = wait(&status)) > 0)
-	{
-		if (waited_pid == last_pid)
-		{
-			if (WIFEXITED(status))
-			{
-				shell->exit_code = WEXITSTATUS(status);
-			}
-			else if (WIFSIGNALED(status))
-			{
-				shell->exit_code = 128 + WTERMSIG(status);
-				if (shell->exit_code == 130)
-					write(STDOUT_FILENO, "\n", 1);
-				else if (shell->exit_code == 130)
-					write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
-			}
-		}
-		else
-		{
-			if (WIFSIGNALED(status))
-			{
-				tmp2 = WTERMSIG(status);
-				if (tmp2 == 2)
-					write(STDOUT_FILENO, "\n", 1);
-				else if (tmp2 == 3)
-					write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
-			}
-		}
-	}
+	wait_for_children(shell, data.last_pid);
 	setup_signals_interactive();
-	free_cmd_list(tmp);
+	free_cmd_list(data.tmp);
 }

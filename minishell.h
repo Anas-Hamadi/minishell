@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 16:21:18 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 22:07:54 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,15 @@ typedef struct s_shell
 	int							temp_count;
 	int							temp_capacity;
 }								t_shell;
+
+typedef struct s_pipe_data
+{
+	int			pid;
+	int			pipefd[2];
+	int			prev_fd;
+	t_cmdnode	*tmp;
+	int			last_pid;
+}				t_pipe_data;
 
 void							add_temp_file(t_shell *shell,
 									const char *filename);
@@ -93,6 +102,11 @@ void							check_exec(t_shell *shell);
 
 char							**list_to_array(t_list *t_envp);
 void							handle_pipes(t_shell *shell);
+void							handle_child_status(t_shell *shell, int status,
+									int waited_pid, int last_pid);
+void							wait_for_children(t_shell *shell, int last_pid);
+void							exec_with_path(t_shell *shell, char *full_path,
+									char **env_array);
 int								handle_redirs(t_shell *shell);
 void							handle_single_cmd(t_shell *shell);
 void							update_env(t_list **envp, char *key,
