@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:40:47 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/31 15:19:56 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 22:43:11 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,23 @@ void	update_cd_env(t_list **envp, char *oldpwd)
 	free(newpwd);
 }
 
+static int	change_directory(char *path, char **oldpwd)
+{
+	*oldpwd = getcwd(NULL, 0);
+	if (!*oldpwd)
+	{
+		perror("getcwd");
+		return (1);
+	}
+	if (chdir(path) != 0)
+	{
+		perror("cd");
+		free(*oldpwd);
+		return (1);
+	}
+	return (0);
+}
+
 void	ft_cd(t_shell *shell)
 {
 	char	*path;
@@ -53,7 +70,6 @@ void	ft_cd(t_shell *shell)
 	char	**argv;
 
 	argv = shell->cmds->argv;
-	// Check for too many arguments
 	if (argv[1] && argv[2])
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
@@ -66,17 +82,8 @@ void	ft_cd(t_shell *shell)
 		shell->exit_code = 1;
 		return ;
 	}
-	oldpwd = getcwd(NULL, 0);
-	if (!oldpwd)
+	if (change_directory(path, &oldpwd) != 0)
 	{
-		perror("getcwd");
-		shell->exit_code = 1;
-		return ;
-	}
-	if (chdir(path) != 0)
-	{
-		perror("cd");
-		free(oldpwd);
 		shell->exit_code = 1;
 		return ;
 	}

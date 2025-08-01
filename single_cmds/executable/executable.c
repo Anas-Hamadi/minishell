@@ -6,27 +6,11 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:27:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 11:53:26 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 22:44:41 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-void	ft_exec_error(char **env_array, char *s_input, int exit_code)
-{
-	ft_putstr_fd(RED "minishell: " RESET, 2);
-	ft_putstr_fd(s_input, 2);
-	if (exit_code == 126)
-	{
-		ft_putendl_fd(": Permission denied" RESET, 2);
-	}
-	else
-	{
-		ft_putendl_fd(": Permission denied or file not found" RESET, 2);
-	}
-	ft_free(env_array);
-	exit(exit_code);
-}
 
 void	exit_status(int pid, t_shell *shell)
 {
@@ -38,7 +22,6 @@ void	exit_status(int pid, t_shell *shell)
 		shell->exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
-		/* Signal exit codes follow the convention: 128 + signal_number */
 		shell->exit_code = 128 + WTERMSIG(status);
 		if (shell->exit_code == 130)
 			write(STDOUT_FILENO, "\n", 1);
@@ -47,54 +30,52 @@ void	exit_status(int pid, t_shell *shell)
 	}
 }
 
+static void	execute_child_process(char *cmd_path, char **s_input,
+		char **env_array)
+{
+	struct stat	st;
+
+	if (access(cmd_path, F_OK) != 0)
+	{
+		ft_exec_error(env_array, s_input[0], 127);
+	}
+	if (stat(cmd_path, &st) == 0 && S_ISDIR(st.st_mode))
+	{
+		ft_putstr_fd(RED "minishell: " RESET, 2);
+		ft_putstr_fd(s_input[0], 2);
+		ft_putendl_fd(": Is a directory" RESET, 2);
+		ft_free(env_array);
+		exit(126);
+	}
+	if (access(cmd_path, X_OK) != 0)
+	{
+		ft_exec_error(env_array, s_input[0], 126);
+	}
+	else
+	{
+		execve(cmd_path, s_input, env_array);
+		perror("execve");
+		ft_free(env_array);
+		exit(127);
+	}
+}
+
 void	execute_cmd(char *cmd_path, char **s_input, t_list *t_envp,
 		t_shell *shell)
 {
 	int			pid;
 	char		**env_array;
-	struct stat	st;
 
-	// ignore the old signals (ctrl c / ctrl \ => ignored)
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
 		return (perror("fork"));
-	// child code
 	if (pid == 0)
 	{
-		// Setup default signal handling for child process
 		setup_signals_child();
 		env_array = list_to_array(t_envp);
-		// Check if file exists
-		if (access(cmd_path, F_OK) != 0)
-		{
-			// File doesn't exist
-			ft_exec_error(env_array, s_input[0], 127);
-		}
-		// Check if it's a directory first
-		if (stat(cmd_path, &st) == 0 && S_ISDIR(st.st_mode))
-		{
-			ft_putstr_fd(RED "minishell: " RESET, 2);
-			ft_putstr_fd(s_input[0], 2);
-			ft_putendl_fd(": Is a directory" RESET, 2);
-			ft_free(env_array);
-			exit(126);
-		}
-		// Check if it's executable
-		if (access(cmd_path, X_OK) != 0)
-		{
-			// File exists but not executable
-			ft_exec_error(env_array, s_input[0], 126);
-		}
-		else
-		{
-			execve(cmd_path, s_input, env_array);
-			perror("execve");
-			ft_free(env_array);
-			exit(127);
-		}
+		execute_child_process(cmd_path, s_input, env_array);
 	}
-	// parent code
 	else
 	{
 		exit_status(pid, shell);
@@ -111,23 +92,13 @@ void	check_exec(t_shell *shell)
 	if (ft_strchr(shell->cmds->argv[0], '/'))
 	{
 		execute_cmd(shell->cmds->argv[0], shell->cmds->argv, shell->envp,
-				shell);
+			shell);
 		return ;
 	}
 	full_path = find_cmd_path(shell->cmds->argv[0], shell->envp);
 	if (!full_path)
 	{
-		ft_putstr_fd("minishell: ", 2);
-		if (shell->cmds->argv[0][0] == '\0')
-		{
-			ft_putendl_fd(": command not found", 2);
-		}
-		else
-		{
-			ft_putstr_fd(shell->cmds->argv[0], 2);
-			ft_putendl_fd(": command not found", 2);
-		}
-		shell->exit_code = 127;
+		handle_cmd_not_found(shell);
 		return ;
 	}
 	else

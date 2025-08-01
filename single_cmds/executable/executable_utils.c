@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:28:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 11:53:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 22:44:36 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,24 +58,12 @@ char	*get_path_value(t_list *t_envp)
 	return (NULL);
 }
 
-char	*find_cmd_path(char *cmd, t_list *t_envp)
+static char	*search_in_paths(char **paths, char *cmd)
 {
 	int		i;
-	char	**paths;
 	char	*full_patch;
 	char	*tmp;
-	char	*path_value;
 
-	// If command is empty, don't search PATH
-	if (!cmd || cmd[0] == '\0')
-		return (NULL);
-	path_value = get_path_value(t_envp);
-	if (!path_value)
-		return (NULL);
-	paths = ft_split(path_value, ':');
-	free(path_value);
-	if (!paths)
-		return (NULL);
 	i = 0;
 	while (paths[i])
 	{
@@ -88,4 +76,21 @@ char	*find_cmd_path(char *cmd, t_list *t_envp)
 		i++;
 	}
 	return (ft_free(paths), NULL);
+}
+
+char	*find_cmd_path(char *cmd, t_list *t_envp)
+{
+	char	**paths;
+	char	*path_value;
+
+	if (!cmd || cmd[0] == '\0')
+		return (NULL);
+	path_value = get_path_value(t_envp);
+	if (!path_value)
+		return (NULL);
+	paths = ft_split(path_value, ':');
+	free(path_value);
+	if (!paths)
+		return (NULL);
+	return (search_in_paths(paths, cmd));
 }

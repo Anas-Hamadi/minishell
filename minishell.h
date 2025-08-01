@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 22:07:54 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 22:43:11 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ void							remove_temp_file(t_shell *shell,
 # define CYAN "\033[36m"
 
 void							ft_export(t_shell *shell);
+bool							ft_variable_exist(t_list *t_envp, char *var);
+bool							is_valid_identifier(char *str);
 void							ft_cd(t_shell *shell);
 int								check_builtin(t_shell *shell);
 int								ft_strcmp(const char *s1, const char *s2);
@@ -99,6 +101,9 @@ void							ft_lstclear(t_list **lst, void (*del)(void *));
 char							*get_path_value(t_list *t_envp);
 char							*find_cmd_path(char *cmd, t_list *t_envp);
 void							check_exec(t_shell *shell);
+void							ft_exec_error(char **env_array, char *s_input,
+									int exit_code);
+void							handle_cmd_not_found(t_shell *shell);
 
 char							**list_to_array(t_list *t_envp);
 void							handle_pipes(t_shell *shell);
