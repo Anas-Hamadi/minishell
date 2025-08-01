@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 12:46:55 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/31 17:24:07 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 15:13:49 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,16 @@ int	handle_redirs(t_shell *shell)
 			if (handle_single_redir(redirs->filename, O_RDONLY, 0) < 0)
 				return (-1);
 		}
-		else if (redirs->type == R_OUT)
+		if (redirs->type == R_OUT)
 		{
 			if (handle_single_redir(redirs->filename,
-									O_WRONLY | O_CREAT | O_TRUNC,
-									1) < 0)
+					O_WRONLY | O_CREAT | O_TRUNC, 1) < 0)
 				return (-1);
 		}
 		else if (redirs->type == R_APPEND)
 		{
 			if (handle_single_redir(redirs->filename,
-									O_WRONLY | O_CREAT | O_APPEND,
-									1) < 0)
+					O_WRONLY | O_CREAT | O_APPEND, 1) < 0)
 				return (-1);
 		}
 		redirs = redirs->next;

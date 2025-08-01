@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/30 15:57:35 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 12:37:57 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,24 +41,8 @@ void	start(t_shell *shell)
 	shell->cmds = parse_command_line(shell, shell->input);
 	if (shell->cmds == NULL)
 	{
-		// Check if parsing was interrupted by a signal
-		if (g_signal_num == SIGINT)
-		{
-			shell->exit_code = 130;
-		}
-		else if (g_signal_num == SIGQUIT)
-		{
-			shell->exit_code = 131;
-		}
-		else
-		{
-			ft_putstr_fd(RED "minishell: parse error\n" RESET, 2);
-			shell->exit_code = 2; // Parse error exit code
-		}
-		dup2(saved_in, 0);
-		dup2(saved_out, 1);
-		close(saved_in);
-		close(saved_out);
+		handle_parse_error(shell);
+		restore_stdio(saved_in, saved_out);
 		return ;
 	}
 	if (shell->cmds->next)
@@ -67,10 +51,7 @@ void	start(t_shell *shell)
 		handle_single_cmd(shell);
 	free_cmd_list(shell->cmds);
 	shell->cmds = NULL;
-	dup2(saved_in, 0);
-	dup2(saved_out, 1);
-	close(saved_in);
-	close(saved_out);
+	restore_stdio(saved_in, saved_out);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -79,40 +60,15 @@ int	main(int ac, char **av, char **envp)
 
 	(void)ac;
 	(void)av;
-	// Setup interactive mode signals
 	setup_signals_interactive();
 	init_shell(&shell, envp);
 	while (true)
 	{
 		shell.input = readline(YELLOW "minishell$ " RESET);
-		if (g_signal_num == 9999)
-			shell.exit_code = 130;
-		// Ctrl-D pressed
-		if (!shell.input)
-			exit(shell.exit_code);
-		if (*shell.input)
-			add_history(shell.input);
-		else
-		{
-			free(shell.input);
-			continue ;
-		}
-		// Reset signal state before processing command
-		g_signal_num = 0;
-		start(&shell);
-		// Check for signals after command execution
-		if (g_signal_num == SIGINT)
-		{
-			shell.exit_code = 130; // Standard exit code for SIGINT
-			g_signal_num = 0;      // Reset signal
-		}
-		else if (g_signal_num == SIGQUIT)
-		{
-			shell.exit_code = 131; // Standard exit code for SIGQUIT
-			g_signal_num = 0;      // Reset signal
-		}
+		if (handle_input(&shell))
+			check_signals_after_execution(&shell);
 	}
 	rl_clear_history();
-	cleanup_temp_files(&shell); // Clean up all temp files before exit
+	cleanup_temp_files(&shell);
 	free_shell(&shell);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/01 15:10:58 by ahamadi           #+#    #+#             */
+/*   Updated: 2025/08/01 15:11:15 by ahamadi          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	signal_handler_interactive(int sig)
@@ -18,7 +30,6 @@ void	signal_handler_heredoc(int sig)
 	{
 		write(STDOUT_FILENO, "\n", 1);
 		g_signal_num = sig;
-		// Don't call readline functions in heredoc context ??
 	}
 }
 
@@ -43,30 +54,11 @@ void	setup_signals_interactive(void)
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN); // Ignore Ctrl-\ in interactive mode
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	setup_signals_heredoc(void)
 {
-	// struct sigaction sa;
-	// sa.sa_handler = signal_handler_heredoc;
-	// sigemptyset(&sa.sa_mask);
-	// sa.sa_flags = 0; // No restart for heredoc
-	// sigaction(SIGINT, &sa, NULL); // Ctrl-C should interrupt
 	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_IGN); // Ignore Ctrl-\ in heredoc
-}
-
-void	setup_signals_child(void)
-{
-	struct sigaction	sa;
-
-	// Setup custom handler for child processes
-	sigemptyset(&sa.sa_mask);
-	sa.sa_handler = SIG_DFL;
-	sigaction(SIGQUIT, &sa, NULL);
-	sa.sa_handler = SIG_DFL;
-	sigaction(SIGINT, &sa, NULL);
-	// sa.sa_handler = signal_handler_child;
-	// sa.sa_flags = 0;
+	signal(SIGQUIT, SIG_IGN);
 }
