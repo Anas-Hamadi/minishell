@@ -14,9 +14,9 @@
 
 int	validate_heredoc_delimiter(const char *delim)
 {
-	if (delim[0] == '<' || delim[0] == '>' || delim[0] == '|'
-		|| delim[0] == '&' || delim[0] == ';' || delim[0] == '('
-		|| delim[0] == ')' || delim[0] == '*')
+	if (delim[0] == '<' || delim[0] == '>' || delim[0] == '|' || delim[0] == '&'
+		|| delim[0] == ';' || delim[0] == '(' || delim[0] == ')'
+		|| delim[0] == '*')
 	{
 		write(STDERR_FILENO, "syntax error: invalid heredoc delimiter\n", 40);
 		return (0);

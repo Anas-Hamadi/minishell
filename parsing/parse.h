@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:29:12 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 17:31:05 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/01 20:38:24 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,35 @@ typedef struct s_redir
 /* one command (between pipes) */
 typedef struct s_cmdnode
 {
-	char				**argv;
-	t_redir				*redirs;
-	struct s_cmdnode	*next;
+	char						**argv;
+	t_redir						*redirs;
+	struct s_cmdnode			*next;
 }								t_cmdnode;
+
+/* Word buffer for parsing */
+typedef struct s_word_buffer
+{
+	char						**buffer;
+	size_t						*buffer_size;
+	size_t						*buffer_len;
+	bool						*found_quotes;
+}								t_word_buffer;
+
+/* Quote buffer for parsing */
+typedef struct s_quote_buffer
+{
+	char						**buffer;
+	size_t						*buffer_size;
+	size_t						*buffer_len;
+}								t_quote_buffer;
+
+/* Heredoc buffer for parsing */
+typedef struct s_hd_buffer
+{
+	char						**buffer;
+	size_t						*buffer_size;
+	size_t						*buffer_len;
+}								t_hd_buffer;
 
 /* Function declarations */
 void							skip_spaces(char **cmd);
@@ -75,6 +100,18 @@ int								is_metachar(char c);
 int								handle_heredoc(struct s_shell *shell,
 									const char *delimiter, int expand,
 									char **out_filename);
+
+/* Word parsing utility functions */
+char							*process_quoted_content(struct s_shell *shell,
+									char **cmd, bool in_del);
+char							*process_expansion(struct s_shell *shell,
+									char **cmd, t_word_buffer *wb);
+int								handle_quote_char(struct s_shell *shell,
+									char **cmd, bool in_del, t_word_buffer *wb);
+int								handle_regular_char(char **cmd,
+									t_word_buffer *wb);
+int								process_word_char(struct s_shell *shell,
+									char **cmd, bool in_del, t_word_buffer *wb);
 
 /* Memory utility functions */
 char							*safe_strcat_realloc(char **dest,
@@ -108,8 +145,8 @@ char							*get_env_value(struct s_shell *shell,
 /* Helper functions */
 void							copy_argv_array(char **new_argv,
 									char **old_argv, int count);
-int								validate_heredoc_delimiter(const char
-									*delimiter);
+int								validate_heredoc_delimiter(
+									const char *delimiter);
 int								handle_heredoc_parsing(struct s_shell *shell,
 									char **cmd_ptr, t_cmdnode *cmd);
 int								handle_redirection_parsing(
@@ -125,4 +162,50 @@ int								handle_redirection_token(struct s_shell *shell,
 									char **cmd_ptr, t_cmdnode *cur);
 int								handle_token_types(struct s_shell *shell,
 									char **cmd, t_cmdnode **cur);
+
+/* Heredoc utility functions */
+char							*heredoc_generate_filename(
+									struct s_shell *shell,
+									int *hdoc_count);
+int								heredoc_child_process(const char *delimiter,
+									int expand, const char *filename,
+									struct s_shell *shell);
+char							*process_line_expansion(struct s_shell *shell,
+									char *line, int expand);
+int								write_line_to_file(int fd, char *line);
+int								check_delimiter_match(const char *line,
+									const char *delimiter);
+int								process_heredoc_line(int fd,
+									const char *delimiter, int expand,
+									struct s_shell *shell);
+int								read_heredoc_lines(int fd,
+									const char *delimiter, int expand,
+									struct s_shell *shell);
+
+/* Parse utility functions */
+void							skip_spaces(char **cmd);
+int								is_metachar(char c);
+int								is_space(char c);
+int								detect_invalid_metachar(char c);
+bool							word_has_quotes(char *input);
+int								count_args(char **argv);
+char							**resize_argv(char **argv, int new_size);
+void							print_parsing_error(const char *message);
+
+/* Environment variable functions */
+char							*get_env_value(struct s_shell *shell,
+									const char *key);
+int								get_last_exit_status(struct s_shell *shell);
+char							*expand_variable(struct s_shell *shell,
+									char **cmd);
+
+/* Quote handling functions */
+char							*handle_quote_block(struct s_shell *shell,
+									char **cmd, char *quote_context,
+									bool in_del);
+
+/* Heredoc expansion functions */
+char							*handle_hd_line(struct s_shell *shell,
+									char **cmd);
+
 #endif

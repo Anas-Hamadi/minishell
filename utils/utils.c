@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:21:03 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 13:24:29 by molamham         ###   ########.fr       */
+/*   Updated: 2025/08/01 20:42:58 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,11 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return (0);
 }
 
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-char	*ft_strrchr(const char *s, int c)
+char	*ft_strrchr_custom(const char *s, int c)
 {
 	size_t	i;
 
-	i = ft_strlen((char *)s);
+	i = ft_strlen(s);
 	while (i > 0)
 	{
 		if (s[i - 1] == (char)c)
@@ -50,16 +40,16 @@ char	*ft_strrchr(const char *s, int c)
 		i--;
 	}
 	if ((char)c == '\0')
-		return ((char *)s + ft_strlen((char *)s));
-	return (0);
+		return ((char *)s + ft_strlen(s));
+	return (NULL);
 }
 
-char	*ft_strdup(const char *s)
+char	*ft_strdup_custom(const char *s)
 {
 	char	*arr;
 	size_t	i;
 
-	i = ft_strlen((char *)s) + 1;
+	i = ft_strlen(s) + 1;
 	arr = malloc(i);
 	if (!arr)
 		return (NULL);
@@ -68,7 +58,7 @@ char	*ft_strdup(const char *s)
 	return (arr);
 }
 
-void	ft_putendl_fd(char *s, int fd)
+void	ft_putendl_fd_custom(char *s, int fd)
 {
 	int	i;
 

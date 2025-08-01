@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/28 17:05:31 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:27:28 by ahamadi          ###   ########.fr       */
+/*   Created: 2025/01/21 10:32:30 by ahamadi           #+#    #+#             */
+/*   Updated: 2025/08/01 20:29:06 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ int	detect_invalid_metachar(char c)
 
 bool	word_has_quotes(char *input)
 {
-	char	*cmd;
+	char	*current;
 
-	cmd = input;
-	while (*cmd && !is_metachar(*cmd))
+	current = input;
+	while (*current)
 	{
-		if (*cmd == '\'' || *cmd == '"')
+		if (*current == '\'' || *current == '"')
 			return (true);
-		cmd++;
+		current++;
 	}
 	return (false);
 }

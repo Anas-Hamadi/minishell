@@ -1,8 +1,8 @@
 {
 	"editor.parameterHints.enabled": true,
 	"C_Cpp.autocomplete": "default",
-	"editor.formatOnSave": true,
-	"files.autoSave": "afterDelay",
+	"editor.formatOnSave": false,
+	"files.autoSave": "off",
 	"C_Cpp.intelliSenseEngine": "default",
 	"files.associations": {
 		"unistd.h": "c",
