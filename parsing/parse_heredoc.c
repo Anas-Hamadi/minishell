@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 16:21:33 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 17:23:55 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 20:00:10 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	validate_heredoc_delimiter(const char *delim)
 }
 
 static int	get_heredoc_delimiter(struct s_shell *shell, char **cmd_ptr,
-		char **delim, bool *expand_hd)
+		char **delim, int *expand_hd)
 {
 	*expand_hd = true;
 	*delim = handle_word(shell, cmd_ptr, true, expand_hd);
@@ -45,7 +45,7 @@ static int	get_heredoc_delimiter(struct s_shell *shell, char **cmd_ptr,
 }
 
 static int	execute_heredoc_processing(struct s_shell *shell, char *delim,
-		bool expand_hd, char **tmp)
+		int *expand_hd, char **tmp)
 {
 	if (handle_heredoc(shell, delim, expand_hd, tmp) < 0)
 	{
@@ -62,7 +62,7 @@ int	handle_heredoc_parsing(struct s_shell *shell, char **cmd_ptr,
 {
 	char	*delim;
 	char	*tmp;
-	bool	expand_hd;
+	int		expand_hd;
 	t_redir	*r;
 
 	*cmd_ptr += 2;
@@ -74,7 +74,7 @@ int	handle_heredoc_parsing(struct s_shell *shell, char **cmd_ptr,
 	}
 	if (get_heredoc_delimiter(shell, cmd_ptr, &delim, &expand_hd) < 0)
 		return (-1);
-	if (execute_heredoc_processing(shell, delim, expand_hd, &tmp) < 0)
+	if (execute_heredoc_processing(shell, delim, &expand_hd, &tmp) < 0)
 	{
 		free(delim);
 		return (-1);

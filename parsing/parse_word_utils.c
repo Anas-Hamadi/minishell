@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:34:01 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:29:11 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 22:19:20 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,15 @@ int	handle_quote_char(struct s_shell *shell, char **cmd, bool in_del,
 
 	quoted_content = process_quoted_content(shell, cmd, in_del);
 	if (!quoted_content)
-		return (0);
+		return (-1);
 	if (!safe_strcat_realloc(wb->buffer, wb->buffer_size, wb->buffer_len,
 			quoted_content))
 	{
 		free(quoted_content);
-		return (0);
+		return (-1);
 	}
 	free(quoted_content);
-	return (1);
+	return (0);
 }
 
 int	handle_regular_char(char **cmd, t_word_buffer *wb)
@@ -68,11 +68,15 @@ int	process_word_char(struct s_shell *shell, char **cmd, bool in_del,
 		t_word_buffer *wb)
 {
 	if (**cmd == '\'' || **cmd == '"')
+	{
+		if (in_del && wb->expand_flag)
+			*(wb->expand_flag) = 0;
 		return (handle_quote_char(shell, cmd, in_del, wb));
+	}
 	else if (**cmd == '$' && !in_del)
 	{
 		if (!process_expansion(shell, cmd, wb))
-			return (0);
+			return (-1);
 	}
 	else
 		return (handle_regular_char(cmd, wb));

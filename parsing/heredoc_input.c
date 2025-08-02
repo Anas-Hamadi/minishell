@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 10:29:00 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:40:56 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 20:07:07 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	check_delimiter_match(const char *line, const char *delimiter)
 	return (0);
 }
 
-int	process_heredoc_line(int fd, const char *delimiter, int expand,
+int	process_heredoc_line(int fd, const char *delimiter, int *expand,
 		struct s_shell *shell)
 {
 	char	*line;
@@ -50,7 +50,7 @@ int	process_heredoc_line(int fd, const char *delimiter, int expand,
 	return (1);
 }
 
-int	read_heredoc_lines(int fd, const char *delimiter, int expand,
+int	read_heredoc_lines(int fd, const char *delimiter, int *expand,
 		struct s_shell *shell)
 {
 	int	result;

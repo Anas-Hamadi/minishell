@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:29:12 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:38:24 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 22:19:20 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct s_word_buffer
 	size_t						*buffer_size;
 	size_t						*buffer_len;
 	bool						*found_quotes;
+	int							*expand_flag;
 }								t_word_buffer;
 
 /* Quote buffer for parsing */
@@ -86,7 +87,7 @@ typedef struct s_hd_buffer
 void							skip_spaces(char **cmd);
 int								detect_invalid_metachar(char c);
 char							*handle_word(struct s_shell *shell, char **cmd,
-									bool in_del, bool *expand_in_hd);
+									bool in_del, int *expand_in_hd);
 bool							word_has_quotes(char *input);
 char							*handle_hd_line(struct s_shell *shell,
 									char **cmd);
@@ -98,7 +99,7 @@ char							*handle_quote_block(struct s_shell *shell,
 									bool in_del);
 int								is_metachar(char c);
 int								handle_heredoc(struct s_shell *shell,
-									const char *delimiter, int expand,
+									const char *delimiter, int *expand,
 									char **out_filename);
 
 /* Word parsing utility functions */
@@ -168,18 +169,18 @@ char							*heredoc_generate_filename(
 									struct s_shell *shell,
 									int *hdoc_count);
 int								heredoc_child_process(const char *delimiter,
-									int expand, const char *filename,
+									int *expand, const char *filename,
 									struct s_shell *shell);
 char							*process_line_expansion(struct s_shell *shell,
-									char *line, int expand);
+									char *line, int *expand);
 int								write_line_to_file(int fd, char *line);
 int								check_delimiter_match(const char *line,
 									const char *delimiter);
 int								process_heredoc_line(int fd,
-									const char *delimiter, int expand,
+									const char *delimiter, int *expand,
 									struct s_shell *shell);
 int								read_heredoc_lines(int fd,
-									const char *delimiter, int expand,
+									const char *delimiter, int *expand,
 									struct s_shell *shell);
 
 /* Parse utility functions */

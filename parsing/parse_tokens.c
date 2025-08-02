@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 16:22:00 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 17:20:50 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 20:18:36 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,11 @@ int	handle_word_token(struct s_shell *shell, char **cmd_ptr, t_cmdnode *cur)
 	char	*word;
 	char	*end;
 	bool	has_quotes;
+	int		expand;
 
+	expand = 1;
 	has_quotes = word_has_quotes(*cmd_ptr);
-	word = handle_word(shell, cmd_ptr, 0, 0);
+	word = handle_word(shell, cmd_ptr, 0, &expand);
 	if (!word)
 	{
 		write(STDERR_FILENO, "Parse error\n", 12);

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 16:21:41 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:31:51 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 22:19:49 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,8 @@
 #include "parse.h"
 
 static int	validate_and_get_delimiter(struct s_shell *shell, char **cmd_ptr,
-		char **delim, bool *expand_hd)
+		char **delim, int *expand_hd)
 {
-	*expand_hd = true;
 	*delim = handle_word(shell, cmd_ptr, true, expand_hd);
 	if (!*delim || (*delim)[0] == '\0')
 	{
@@ -35,7 +34,7 @@ static int	validate_and_get_delimiter(struct s_shell *shell, char **cmd_ptr,
 }
 
 static int	process_heredoc_content(struct s_shell *shell, char *delim,
-		bool expand_hd, char **tmp)
+		int *expand_hd, char **tmp)
 {
 	if (handle_heredoc(shell, delim, expand_hd, tmp) < 0)
 	{
@@ -51,7 +50,7 @@ int	handle_heredoc_token(struct s_shell *shell, char **cmd_ptr, t_cmdnode *cur)
 {
 	char	*delim;
 	char	*tmp;
-	bool	expand_hd;
+	int		expand_hd;
 	t_redir	*r;
 
 	*cmd_ptr += 2;
@@ -63,7 +62,7 @@ int	handle_heredoc_token(struct s_shell *shell, char **cmd_ptr, t_cmdnode *cur)
 	}
 	if (validate_and_get_delimiter(shell, cmd_ptr, &delim, &expand_hd) < 0)
 		return (-1);
-	if (process_heredoc_content(shell, delim, expand_hd, &tmp) < 0)
+	if (process_heredoc_content(shell, delim, &expand_hd, &tmp) < 0)
 	{
 		free(delim);
 		return (-1);

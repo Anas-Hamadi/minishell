@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 15:15:23 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:26:39 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 20:03:50 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	handle_child_signals(pid_t pid, char *fname, int status)
 }
 
 static int	fork_heredoc_process(t_shell *shell, const char *delimiter,
-		int expand, const char *fname)
+		int *expand, const char *fname)
 {
 	pid_t	pid;
 
@@ -47,7 +47,7 @@ static int	fork_heredoc_process(t_shell *shell, const char *delimiter,
 	return (pid);
 }
 
-int	handle_heredoc(t_shell *shell, const char *delimiter, int expand,
+int	handle_heredoc(t_shell *shell, const char *delimiter, int *expand,
 		char **out_filename)
 {
 	static int	hdoc_count;
