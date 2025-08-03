@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/02 20:09:37 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 13:04:31 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ void	start(t_shell *shell)
 		handle_single_cmd(shell);
 	free_cmd_list(shell->cmds);
 	shell->cmds = NULL;
+	free(shell->input);
+	shell->input = NULL;
 	restore_stdio(saved_in, saved_out);
 }
 

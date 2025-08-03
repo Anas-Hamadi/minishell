@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:29:12 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/03 12:31:35 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 12:47:19 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ typedef struct s_cmdnode
 	bool						cmd_has_quotes;
 }								t_cmdnode;
 
-/* Word buffer for parsing */
+// word buffer for parsing
 typedef struct s_word_buffer
 {
 	char						**buffer;
@@ -68,7 +68,7 @@ typedef struct s_word_buffer
 	int							*expand_flag;
 }								t_word_buffer;
 
-/* Quote buffer for parsing */
+// quote buffer for parsing
 typedef struct s_quote_buffer
 {
 	char						**buffer;
@@ -76,7 +76,7 @@ typedef struct s_quote_buffer
 	size_t						*buffer_len;
 }								t_quote_buffer;
 
-/* Heredoc buffer for parsing */
+// heredoc buffer for parsing
 typedef struct s_hd_buffer
 {
 	char						**buffer;

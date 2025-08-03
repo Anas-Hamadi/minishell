@@ -18,6 +18,7 @@ libft/obj/
 *.pdf
 notes
 *.md
+*.log
 *.sh
 
 # Misc
