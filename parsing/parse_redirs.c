@@ -6,13 +6,13 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 16:21:54 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:41:21 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 23:01:44 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
-static int	process_redir_filename(struct s_shell *shell, char **cmd,
+int	process_redir_filename(struct s_shell *shell, char **cmd,
 		t_cmdnode *cur, t_redir_type type)
 {
 	char	*filename;

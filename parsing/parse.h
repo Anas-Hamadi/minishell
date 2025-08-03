@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:29:12 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/03 12:47:19 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 23:01:44 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,9 @@ int								is_metachar(char c);
 int								handle_heredoc(struct s_shell *shell,
 									const char *delimiter, int *expand,
 									char **out_filename);
+int								process_redir_filename(struct s_shell *shell,
+									char **cmd, t_cmdnode *cur,
+									t_redir_type type);
 
 /* Word parsing utility functions */
 char							*process_quoted_content(struct s_shell *shell,

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 16:21:33 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/02 20:00:10 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 23:01:44 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,27 @@ static int	execute_heredoc_processing(struct s_shell *shell, char *delim,
 	return (0);
 }
 
+static int	process_heredoc_setup(struct s_shell *shell, char **cmd_ptr,
+		char **delim, char **tmp)
+{
+	int	expand_hd;
+
+	expand_hd = 1;
+	if (get_heredoc_delimiter(shell, cmd_ptr, delim, &expand_hd) < 0)
+		return (-1);
+	if (execute_heredoc_processing(shell, *delim, &expand_hd, tmp) < 0)
+	{
+		free(*delim);
+		return (-1);
+	}
+	return (0);
+}
+
 int	handle_heredoc_parsing(struct s_shell *shell, char **cmd_ptr,
 		t_cmdnode *cur)
 {
 	char	*delim;
 	char	*tmp;
-	int		expand_hd;
 	t_redir	*r;
 
 	*cmd_ptr += 2;
@@ -72,13 +87,8 @@ int	handle_heredoc_parsing(struct s_shell *shell, char **cmd_ptr,
 		write(STDERR_FILENO, "syntax error: expected heredoc delimiter\n", 42);
 		return (-1);
 	}
-	if (get_heredoc_delimiter(shell, cmd_ptr, &delim, &expand_hd) < 0)
+	if (process_heredoc_setup(shell, cmd_ptr, &delim, &tmp) < 0)
 		return (-1);
-	if (execute_heredoc_processing(shell, delim, &expand_hd, &tmp) < 0)
-	{
-		free(delim);
-		return (-1);
-	}
 	r = create_redir(R_IN, tmp);
 	if (r)
 		add_redir_to_cmd(cur, r);
