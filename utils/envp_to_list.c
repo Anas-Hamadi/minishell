@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:04:43 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/03 20:50:19 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 22:37:56 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,24 +35,6 @@ void	update_env(t_list **envp, char *key, char *value)
 	}
 	ft_lstadd_back(envp, ft_lstnew(ft_strdup(new_str)));
 	free(new_str);
-}
-
-char	*find_env_value(t_list *envp, char *key)
-{
-	t_list	*tmp;
-	char	*content;
-	int		key_len;
-
-	key_len = ft_strlen(key);
-	tmp = envp;
-	while (tmp)
-	{
-		content = (char *)tmp->content;
-		if (!ft_strncmp(content, key, key_len) && content[key_len] == '=')
-			return (content + key_len + 1);
-		tmp = tmp->next;
-	}
-	return (NULL);
 }
 
 t_list	*envp_to_list(char **envp)

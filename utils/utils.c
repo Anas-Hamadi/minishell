@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:21:03 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 20:42:58 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 22:38:01 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,24 @@ char	*ft_strdup_custom(const char *s)
 	ft_memcpy(arr, s, i);
 	arr[i - 1] = '\0';
 	return (arr);
+}
+
+char	*find_env_value(t_list *envp, char *key)
+{
+	t_list	*tmp;
+	char	*content;
+	int		key_len;
+
+	key_len = ft_strlen(key);
+	tmp = envp;
+	while (tmp)
+	{
+		content = (char *)tmp->content;
+		if (!ft_strncmp(content, key, key_len) && content[key_len] == '=')
+			return (content + key_len + 1);
+		tmp = tmp->next;
+	}
+	return (NULL);
 }
 
 void	ft_putendl_fd_custom(char *s, int fd)

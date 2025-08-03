@@ -6,55 +6,42 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:40:47 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/03 20:50:19 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 22:37:32 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-char	*get_target_path(char **argv)
+static void	handle_home_chdir(t_list **envp, char *oldpwd, char *newpwd)
 {
-	char	*home;
-
-	if (argv[1])
-		return (argv[1]);
-	else
+	if (!newpwd)
 	{
-		home = getenv("HOME");
-		if (!home)
-		{
-			ft_putendl_fd("cd: home not set\n", 2);
-			return (NULL);
-		}
-		return (home);
+		update_env(envp, "PWD", find_env_value(*envp, "HOME"));
+		if (oldpwd)
+			update_env(envp, "OLDPWD", oldpwd);
+		return ;
 	}
+	if (oldpwd)
+		update_env(envp, "OLDPWD", oldpwd);
+	update_env(envp, "PWD", newpwd);
+	free(newpwd);
 }
 
 static void	handle_getcwd_failure(t_list **envp, char *oldpwd)
 {
 	char	*home;
+	char	*newpwd;
 
 	home = find_env_value(*envp, "HOME");
 	if (home && chdir(home) == 0)
 	{
-		char	*newpwd;
-
 		newpwd = getcwd(NULL, 0);
-		if (!newpwd)
-		{
-			update_env(envp, "PWD", home);
-			if (oldpwd)
-				update_env(envp, "OLDPWD", oldpwd);
-			return ;
-		}
-		if (oldpwd)
-			update_env(envp, "OLDPWD", oldpwd);
-		update_env(envp, "PWD", newpwd);
-		free(newpwd);
+		handle_home_chdir(envp, oldpwd, newpwd);
 	}
 	else
 	{
-		ft_putstr_fd("cd: current directory removed and cannot access home\n", 2);
+		ft_putstr_fd("cd: current directory removed and cannot access ", 2);
+		ft_putstr_fd("home\n", 2);
 		if (oldpwd)
 			free(oldpwd);
 	}

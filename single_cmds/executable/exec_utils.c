@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:23:15 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/03 20:50:19 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 22:37:47 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,13 @@ void	handle_cmd_not_found(t_shell *shell)
 
 int	handle_empty_command(t_shell *shell)
 {
-	if (shell->cmds->cmd_has_quotes && shell->cmds->argv 
+	if (shell->cmds->cmd_has_quotes && shell->cmds->argv
 		&& shell->cmds->argv[0] && ft_strlen(shell->cmds->argv[0]) == 0)
 	{
 		ft_putstr_fd("minishell: : command not found\n", 2);
 		return (127);
 	}
-	if (!shell->cmds->argv || !shell->cmds->argv[0] 
+	if (!shell->cmds->argv || !shell->cmds->argv[0]
 		|| ft_strlen(shell->cmds->argv[0]) == 0)
 		return (0);
 	return (0);

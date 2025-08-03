@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 15:44:30 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/31 15:19:56 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 22:37:38 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ static void	ft_exit_error(t_shell *shell, char *arg)
 	ft_putstr_fd("minishell: exit: ", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putendl_fd(": numeric argument required", 2);
+	if (shell->stdio_saved)
+	{
+		restore_stdio(shell->saved_in, shell->saved_out);
+		shell->stdio_saved = 0;
+	}
 	free_shell(shell);
 	exit(2);
 }
@@ -55,6 +60,11 @@ void	ft_exit(t_shell *shell)
 	}
 	if (argv[1])
 		exit_code = ft_atoi(argv[1]);
+	if (shell->stdio_saved)
+	{
+		restore_stdio(shell->saved_in, shell->saved_out);
+		shell->stdio_saved = 0;
+	}
 	free_shell(shell);
 	exit(exit_code);
 }

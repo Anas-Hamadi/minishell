@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/03 21:33:17 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 22:36:57 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@ typedef struct s_shell
 	char						**temp_files;
 	int							temp_count;
 	int							temp_capacity;
+	int							saved_in;
+	int							saved_out;
+	int							stdio_saved;
 }								t_shell;
 
 typedef struct s_pipe_data
@@ -97,6 +100,7 @@ t_list							*ft_lstlast(t_list *lst);
 t_list							*envp_to_list(char **envp);
 void							init_default_env(t_list **envp);
 char							*find_env_value(t_list *envp, char *key);
+char							*get_target_path(char **argv);
 int								ft_lstsize(t_list *lst);
 void							ft_lstclear(t_list **lst, void (*del)(void *));
 

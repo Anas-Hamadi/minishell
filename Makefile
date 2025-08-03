@@ -7,7 +7,7 @@ NAME = minishell
 LIBFT_DIR = parsing/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRC = utils/ft_split.c utils/utils.c single_cmds/builtin/ft_pwd.c single_cmds/builtin/check_builtin.c single_cmds/builtin/ft_cd.c single_cmds/builtin/ft_echo.c \
+SRC = utils/ft_split.c utils/utils.c single_cmds/builtin/ft_pwd.c single_cmds/builtin/check_builtin.c single_cmds/builtin/ft_cd.c single_cmds/builtin/cd_utils.c single_cmds/builtin/ft_echo.c \
 	  main.c main_utils.c single_cmds/builtin/ft_env.c utils/ft_strchr.c single_cmds/builtin/ft_exit.c utils/ft_atoi.c utils/ft_memcpy.c utils/ft_strjoin.c \
 	  single_cmds/builtin/ft_unset.c utils/ft_lstadd_back.c utils/ft_lstlast.c utils/ft_lstnew.c utils/envp_to_list.c single_cmds/builtin/ft_export.c single_cmds/builtin/ft_export_utils.c \
 	  utils/ft_substr.c utils/sorted_env.c utils/ft_lstsize.c utils/ft_strncmp.c single_cmds/executable/executable.c pipe/pipes.c pipe/pipe_utils.c parsing/parser.c parsing/utils.c parsing/heredoc.c parsing/memory_utils.c \
