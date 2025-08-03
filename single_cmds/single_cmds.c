@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:26:33 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 12:37:57 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 21:16:21 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	handle_single_cmd(t_shell *shell)
 			return ;
 		}
 	}
-	if (shell->cmds->argv)
+	if (shell->cmds->argv && !shell->cmds->cmd_has_quotes)
 		remove_empty_args(shell->cmds->argv);
 	if (!shell->cmds->argv || !shell->cmds->argv[0])
 	{

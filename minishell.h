@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/03 09:58:31 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 21:33:17 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ t_list							*ft_lstnew(void *content);
 void							ft_lstadd_back(t_list **lst, t_list *t_new);
 t_list							*ft_lstlast(t_list *lst);
 t_list							*envp_to_list(char **envp);
+void							init_default_env(t_list **envp);
+char							*find_env_value(t_list *envp, char *key);
 int								ft_lstsize(t_list *lst);
 void							ft_lstclear(t_list **lst, void (*del)(void *));
 
@@ -115,6 +117,7 @@ void							exec_with_path(t_shell *shell, char *full_path,
 									char **env_array);
 int								handle_redirs(t_shell *shell);
 void							handle_single_cmd(t_shell *shell);
+void							remove_empty_args(char **argv);
 void							update_env(t_list **envp, char *key,
 									char *value);
 

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 15:10:58 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/03 17:13:02 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 20:50:19 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,11 @@ void	setup_signals_interactive(void)
 
 void	setup_signals_heredoc(void)
 {
-	signal(SIGINT, SIG_DFL);
+	struct sigaction	sa;
+
+	sa.sa_handler = SIG_DFL;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
 }

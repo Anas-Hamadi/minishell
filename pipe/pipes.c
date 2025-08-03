@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 21:53:51 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/03 09:58:31 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 21:33:17 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ static void	child_process(t_shell *shell, int pipefd[2], int prev_fd)
 	}
 	if (handle_redirs(shell) < 0)
 		exit(1);
+	if (shell->cmds->argv && !shell->cmds->cmd_has_quotes)
+		remove_empty_args(shell->cmds->argv);
 	if (check_builtin(shell))
 		exit(shell->exit_code);
 	else

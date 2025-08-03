@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envp_to_list.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: molamham <molamham@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:04:43 by molamham          #+#    #+#             */
-/*   Updated: 2025/07/26 13:06:02 by molamham         ###   ########.fr       */
+/*   Updated: 2025/08/03 20:50:19 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,24 @@ void	update_env(t_list **envp, char *key, char *value)
 	free(new_str);
 }
 
+char	*find_env_value(t_list *envp, char *key)
+{
+	t_list	*tmp;
+	char	*content;
+	int		key_len;
+
+	key_len = ft_strlen(key);
+	tmp = envp;
+	while (tmp)
+	{
+		content = (char *)tmp->content;
+		if (!ft_strncmp(content, key, key_len) && content[key_len] == '=')
+			return (content + key_len + 1);
+		tmp = tmp->next;
+	}
+	return (NULL);
+}
+
 t_list	*envp_to_list(char **envp)
 {
 	int		i;
@@ -61,4 +79,47 @@ t_list	*envp_to_list(char **envp)
 		i++;
 	}
 	return (t_envp);
+}
+
+static void	init_pwd(t_list **envp)
+{
+	char	*pwd;
+
+	if (!find_env_value(*envp, "PWD"))
+	{
+		pwd = getcwd(NULL, 0);
+		if (pwd)
+		{
+			update_env(envp, "PWD", pwd);
+			free(pwd);
+		}
+	}
+}
+
+static void	init_shlvl(t_list **envp)
+{
+	char	*shlvl_str;
+	int		shlvl;
+
+	if (!find_env_value(*envp, "SHLVL"))
+		update_env(envp, "SHLVL", "1");
+	else
+	{
+		shlvl_str = find_env_value(*envp, "SHLVL");
+		shlvl = ft_atoi(shlvl_str) + 1;
+		shlvl_str = ft_itoa_simple(shlvl);
+		if (shlvl_str)
+		{
+			update_env(envp, "SHLVL", shlvl_str);
+			free(shlvl_str);
+		}
+	}
+}
+
+void	init_default_env(t_list **envp)
+{
+	init_pwd(envp);
+	init_shlvl(envp);
+	if (!find_env_value(*envp, "_"))
+		update_env(envp, "_", "/usr/bin/env");
 }

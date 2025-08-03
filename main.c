@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 12:33:57 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/03 13:04:31 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 20:50:19 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ volatile sig_atomic_t	g_signal_num = 0;
 void	init_shell(t_shell *shell, char **envp)
 {
 	shell->envp_list = envp_to_list(envp);
+	init_default_env(&shell->envp_list);
 	shell->envp = shell->envp_list;
 	shell->cmds = NULL;
 	shell->input = NULL;
