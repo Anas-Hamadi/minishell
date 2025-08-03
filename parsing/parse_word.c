@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 12:03:10 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/02 22:19:20 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/02 22:47:40 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ char	*handle_word(struct s_shell *shell, char **cmd, bool in_del,
 			return (NULL);
 		}
 	}
-	*expand_in_hd = *(wb.expand_flag);
+	if (expand_in_hd)
+		*expand_in_hd = *(wb.expand_flag);
 	return (buffer);
 }
