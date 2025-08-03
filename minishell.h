@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:00:59 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/01 22:43:11 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 09:58:31 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void							check_exec(t_shell *shell);
 void							ft_exec_error(char **env_array, char *s_input,
 									int exit_code);
 void							handle_cmd_not_found(t_shell *shell);
+int								handle_empty_command(t_shell *shell);
 
 char							**list_to_array(t_list *t_envp);
 void							handle_pipes(t_shell *shell);

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:23:15 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 22:44:25 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 12:23:06 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,14 @@ void	handle_cmd_not_found(t_shell *shell)
 		ft_putendl_fd(": command not found", 2);
 	}
 	shell->exit_code = 127;
+}
+
+int	handle_empty_command(t_shell *shell)
+{
+	if (shell->cmds->cmd_has_quotes)
+	{
+		ft_putstr_fd("minishell: : command not found\n", 2);
+		return (127);
+	}
+	return (0);
 }

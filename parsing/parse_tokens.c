@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 16:22:00 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/02 20:18:36 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 12:22:51 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ int	handle_word_token(struct s_shell *shell, char **cmd_ptr, t_cmdnode *cur)
 		while (end >= word && (*end == ' ' || *end == '\t'))
 			*end-- = '\0';
 	}
+	if (has_quotes && (!cur->argv || !cur->argv[0]))
+		cur->cmd_has_quotes = true;
 	add_arg_to_cmd(cur, word);
 	free(word);
 	return (0);

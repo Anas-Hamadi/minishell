@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 15:15:16 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 20:40:54 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 12:27:45 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ t_cmdnode	*create_cmdnode(void)
 	cmd->argv[0] = NULL;
 	cmd->redirs = NULL;
 	cmd->next = NULL;
+	cmd->cmd_has_quotes = false;
 	return (cmd);
 }
 

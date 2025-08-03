@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:29:12 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/02 22:19:20 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 12:31:35 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct s_cmdnode
 	char						**argv;
 	t_redir						*redirs;
 	struct s_cmdnode			*next;
+	bool						cmd_has_quotes;
 }								t_cmdnode;
 
 /* Word buffer for parsing */
