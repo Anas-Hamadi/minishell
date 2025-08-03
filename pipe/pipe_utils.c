@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 20:19:22 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 22:11:52 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 17:13:02 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,18 @@ void	handle_child_status(t_shell *shell, int status, int waited_pid,
 		{
 			shell->exit_code = 128 + WTERMSIG(status);
 			if (shell->exit_code == 130)
-				write(STDOUT_FILENO, "\n", 1);
-			else if (shell->exit_code == 130)
-				write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
+				write(STDERR_FILENO, "\n", 1);
+			else if (shell->exit_code == 131)
+				write(STDERR_FILENO, "Quit (core dumped)\n", 20);
 		}
 	}
 	else if (WIFSIGNALED(status))
 	{
 		sig = WTERMSIG(status);
 		if (sig == 2)
-			write(STDOUT_FILENO, "\n", 1);
+			write(STDERR_FILENO, "\n", 1);
 		else if (sig == 3)
-			write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
+			write(STDERR_FILENO, "Quit (core dumped)\n", 20);
 	}
 }
 

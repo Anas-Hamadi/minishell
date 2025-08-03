@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 15:10:58 by ahamadi           #+#    #+#             */
-/*   Updated: 2025/08/01 15:11:15 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 17:13:02 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	signal_handler_child(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(STDOUT_FILENO, "\n", 1);
+		write(STDERR_FILENO, "\n", 1);
 	}
 	else if (sig == SIGQUIT)
 	{
-		write(STDOUT_FILENO, "^\\Quit (core dumped)\n", 20);
+		write(STDERR_FILENO, "^\\Quit (core dumped)\n", 20);
 	}
 	g_signal_num = sig;
 }

@@ -6,7 +6,7 @@
 /*   By: ahamadi <ahamadi@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 13:27:22 by molamham          #+#    #+#             */
-/*   Updated: 2025/08/03 15:29:06 by ahamadi          ###   ########.fr       */
+/*   Updated: 2025/08/03 17:13:02 by ahamadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ void	exit_status(int pid, t_shell *shell)
 	{
 		shell->exit_code = 128 + WTERMSIG(status);
 		if (shell->exit_code == 130)
-			write(STDOUT_FILENO, "\n", 1);
+			write(STDERR_FILENO, "\n", 1);
 		else if (shell->exit_code == 131)
-			write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
+			write(STDERR_FILENO, "Quit (core dumped)\n", 20);
 	}
 }
 
